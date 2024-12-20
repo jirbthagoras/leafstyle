@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
     <div className="mx-auto text-center mt-12 w-fit h-fit bg-primary rounded-xl">

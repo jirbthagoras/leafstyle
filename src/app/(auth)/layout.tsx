@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from 'next/font/google';
-import "./globals.css";
-import Navbar from "@/components/Navbar";
+import "../globals.css";
 
 // font will be used
 const jakartaSans = Plus_Jakarta_Sans({
@@ -14,7 +13,7 @@ export const metadata: Metadata = {
   description: "Greenfinity: Go Beyond The Greens",
 };
 
-export default function RootLayout({
+export default function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -24,6 +23,7 @@ export default function RootLayout({
       <body
         className={`${jakartaSans.className} antialiased`}
       >
+        <h1>Ini ada di auth</h1>
         {children}
       </body>
     </html>
