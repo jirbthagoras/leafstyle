@@ -1,8 +1,16 @@
 import { auth, db } from "@/lib/firebase/config";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential} from "firebase/auth";
 import Cookies from "js-cookie";
 import {signOut} from "@firebase/auth";
+
+export default async function saveCookie(userCredential: UserCredential) {
+  Cookies.set("user", JSON.stringify(await userCredential.user.getIdToken()), {
+    expires: 1,
+    sameSite: "none",
+    secure: true
+  });
+}
 
 export const signUpUser = async (email: string, password: string) => {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -12,11 +20,7 @@ export const signUpUser = async (email: string, password: string) => {
     lastUpdated: serverTimestamp(),
   });
 
-  Cookies.set("user", JSON.stringify(userCredential.user), {
-    expires: 1,
-    sameSite: "none",
-    secure: true
-  });
+  await saveCookie(userCredential);
 
   return userCredential.user;
 };
@@ -24,11 +28,7 @@ export const signUpUser = async (email: string, password: string) => {
 export const loginUser = async (email: string, password: string) => {
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-  Cookies.set("user", JSON.stringify(userCredential.user), {
-    expires: 1,
-    sameSite: "none",
-    secure: true
-  });
+  await saveCookie(userCredential);
 
   return userCredential.user;
 };
