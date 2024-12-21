@@ -1,5 +1,4 @@
-// src/components/AuthForm.tsx
-"use client";
+"use client"
 
 import { useState } from "react";
 import Cookies from "js-cookie"
