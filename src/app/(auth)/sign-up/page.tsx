@@ -5,7 +5,8 @@ export default function SignUpPage() {
   return (
     <div>
       <h1>Sign In</h1>
-      <AuthForm mode="signup" />
+      {/*<AuthForm mode="signup" />*/}
+    {/*    komponen baru*/}
     </div>
   );
 }

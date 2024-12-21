@@ -23,7 +23,6 @@ export default function AuthLayout({
       <body
         className={`${jakartaSans.className} antialiased`}
       >
-        <h1>Ini ada di auth</h1>
         {children}
       </body>
     </html>

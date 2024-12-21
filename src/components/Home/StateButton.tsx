@@ -2,9 +2,9 @@
 
 import { logoutUser } from "@/services/AuthService";
 import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-export default function LogoutButton() {
+export default function StateButton() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isLoading, setIsLoading] = useState(true); // Track loading state
 
@@ -28,15 +28,27 @@ export default function LogoutButton() {
     };
 
     if (isLoading) {
-        return <button disabled={true}>Loading...</button>; // Render a loading indicator
+        return <button
+            disabled={true}
+            className="bg-gray-700 text-white text-lg px-4 py-2 rounded-md font-medium hover:bg-red-700">
+            Loading
+        </button>
     }
 
     return (
         <div>
             {isLoggedIn ? (
-                <button onClick={handleLogout}>Logout</button>
+                <button
+                    onClick={handleLogout}
+                    className="bg-red-600 text-white text-lg px-4 py-2 rounded-md font-medium hover:bg-red-700">
+                    Logout
+                </button>
             ) : (
-                <span>Please log in</span>
+                <button
+
+                    className="bg-green-600 text-white text-lg px-4 py-2 rounded-md font-medium hover:bg-green-700">
+                Login
+                </button>
             )}
         </div>
     );
