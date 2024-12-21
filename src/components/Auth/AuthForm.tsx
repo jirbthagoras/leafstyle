@@ -2,7 +2,9 @@
 "use client";
 
 import { useState } from "react";
+import Cookies from "js-cookie"
 import { loginUser, signUpUser } from "@/services/authServices";
+import {Cookie} from "next/dist/compiled/@next/font/dist/google";
 
 type AuthFormProps = {
   mode: "login" | "signup";
@@ -14,14 +16,27 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
   const [password, setPassword] = useState("");
 
   const handleSubmit = async () => {
+
+      Cookies.set("iniTestCookie", "Tes");
+
     try {
       if (mode === "login") {
         const user = await loginUser(email, password);
-        localStorage.setItem("user", JSON.stringify(user));
+          Cookies.set("user", JSON.stringify(user), {
+              expires: 1,
+              sameSite: "Strict", // Prevent cross-site issues
+          });
+          // const savedUser = JSON.parse(Cookies.get("user") as string);
+          // console.log(savedUser.email);
         alert("Login successful!");
       } else if (mode === "signup") {
         const user = await signUpUser(email, password);
-        localStorage.setItem("user", JSON.stringify(user));
+          Cookies.set("test", JSON.stringify(user), {
+              expires: 1,
+              sameSite: "Strict",
+          });
+          // const savedUser = JSON.parse(Cookies.get("user") as string);
+          // console.log(savedUser.email);
         alert("Sign-up successful!");
       }
       if (onSuccess) onSuccess();
