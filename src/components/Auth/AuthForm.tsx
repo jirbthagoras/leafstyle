@@ -4,7 +4,6 @@
 import { useState } from "react";
 import Cookies from "js-cookie"
 import { loginUser, signUpUser } from "@/services/authServices";
-import {Cookie} from "next/dist/compiled/@next/font/dist/google";
 
 type AuthFormProps = {
   mode: "login" | "signup";
