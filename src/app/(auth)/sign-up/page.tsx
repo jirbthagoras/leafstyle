@@ -1,10 +1,10 @@
 // app/login/page.tsx
 import AuthForm from "@/components/Auth/AuthForm";
 
-export default function RegisterPage() {
+export default function SignUpPage() {
   return (
     <div>
-      <h1>Register</h1>
+      <h1>Sign In</h1>
       <AuthForm mode="signup" />
     </div>
   );
