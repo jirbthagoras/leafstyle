@@ -1,10 +1,20 @@
 import {NextRequest, NextResponse} from 'next/server';
-import Cookies from "js-cookie";
+import { auth } from "@/lib/firebase/config";
+import {onAuthStateChanged} from "firebase/auth";
 
 export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
 
-    if(path === "/" && !Cookies.get("user")) {
-        return NextResponse.redirect(new URL('/login', request.nextUrl));
+    const {cookies} = request;
+
+    const token = cookies.get("user");
+
+    if(!token) {
+
+        if(path === "/") {
+            return NextResponse.redirect(new URL("/login", request.url));
+        }
+
     }
+
 }

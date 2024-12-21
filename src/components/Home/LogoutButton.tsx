@@ -13,8 +13,8 @@ export default function LogoutButton() {
         setIsLoggedIn(!!userCookie); // Convert to boolean
     }, []);
 
-    const handleLogout = () => {
-        logoutUser();
+    const handleLogout = async () => {
+        await logoutUser();
         setIsLoggedIn(false);
     };
 
