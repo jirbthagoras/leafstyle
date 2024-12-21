@@ -8,7 +8,6 @@ export const signUpUser = async (email: string, password: string) => {
   const userRef = doc(db, "users", userCredential.user.uid); // Use UID as document ID
   await setDoc(userRef, {
     points: 0,
-    treesGrown: 0,
     lastUpdated: serverTimestamp(),
   });
 
