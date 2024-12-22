@@ -3,8 +3,10 @@
 import { logoutUser } from "@/services/AuthService";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 
 export default function StateButton() {
+    const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isLoading, setIsLoading] = useState(true); // Track loading state
 
@@ -22,11 +24,13 @@ export default function StateButton() {
     const handleLogout = async () => {
         setIsLoading(true); // Show loading during logout
         await logoutUser();
-        Cookies.remove("user");
         setIsLoggedIn(false);
         setIsLoading(false);
     };
 
+    const handleLogin = () => {
+        router.push("/sign-up");
+    }
     if (isLoading) {
         return <button
             disabled={true}
@@ -45,7 +49,7 @@ export default function StateButton() {
                 </button>
             ) : (
                 <button
-
+                    onClick={handleLogin}
                     className="bg-green-600 text-white text-lg px-4 py-2 rounded-md font-medium hover:bg-green-700">
                 Login
                 </button>

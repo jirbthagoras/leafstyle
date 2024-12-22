@@ -12,10 +12,12 @@ export default async function saveCookie(userCredential: UserCredential) {
   });
 }
 
-export const signUpUser = async (email: string, password: string) => {
+export const signUpUser = async (email: string, password: string, name: string, phoneNumber: number) => {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
   const userRef = doc(db, "users", userCredential.user.uid); // Use UID as document ID
   await setDoc(userRef, {
+    name: name,
+    phoneNumber: phoneNumber,
     points: 0,
     lastUpdated: serverTimestamp(),
   });

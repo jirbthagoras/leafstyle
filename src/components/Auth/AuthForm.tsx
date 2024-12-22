@@ -1,17 +1,20 @@
 // components/Auth/AuthForm.tsx
 import { useState } from "react";
-
+import { signUpUser, loginUser } from "@/services/AuthService";
+import { useRouter } from "next/navigation";
 interface AuthFormProps {
   mode: "signup" | "login";
 }
 
 const AuthForm = ({ mode }: AuthFormProps) => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     name: mode === "signup" ? "" : undefined,
     phoneNumber: mode === "signup" ? "" : undefined,
   });
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -23,12 +26,23 @@ const AuthForm = ({ mode }: AuthFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData); // Handle form submission here
-    // Implement logic for submitting form data to the backend or API
+    setError(null);
+    
+    try {
+      if (mode === "signup" && formData.name && formData.phoneNumber) {
+        signUpUser(formData.email, formData.password, formData.name, parseInt(formData.phoneNumber));
+      } else {
+        loginUser(formData.email, formData.password);
+      }
+      router.push("/");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'An error occurred');
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+
       {mode === "signup" && (
         <>
           <div className="mb-4">
