@@ -24,15 +24,15 @@ const AuthForm = ({ mode }: AuthFormProps) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     
     try {
       if (mode === "signup" && formData.name && formData.phoneNumber) {
-        signUpUser(formData.email, formData.password, formData.name, parseInt(formData.phoneNumber));
+        await signUpUser(formData.email, formData.password, formData.name, parseInt(formData.phoneNumber));
       } else {
-        loginUser(formData.email, formData.password);
+        await loginUser(formData.email, formData.password);
       }
       router.push("/");
     } catch (error) {
