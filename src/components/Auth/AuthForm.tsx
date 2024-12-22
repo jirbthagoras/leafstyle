@@ -36,12 +36,18 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       }
       router.push("/");
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'An error occurred');
+      setError(error instanceof Error ? `Error: ${error.message}` : 'An error occurred');
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+
+        {error && (
+            <div className="p-4 text-red-700 bg-red-100 border border-red-500 rounded">
+                {error}
+            </div>
+        )}
 
       {mode === "signup" && (
         <>
