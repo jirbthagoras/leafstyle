@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import { LeafyGreen } from 'lucide-react';
 import { motion } from 'framer-motion'; // Import motion
