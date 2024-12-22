@@ -19,12 +19,10 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
+      <div
         className={`${jakartaSans.className} antialiased`}
       >
         {children}
-      </body>
-    </html>
+      </div>
   );
 }
