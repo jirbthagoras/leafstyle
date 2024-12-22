@@ -95,16 +95,16 @@ const EventPage = () => {
                         </p>
                         <div className="flex justify-end gap-4">
                             <button
-                                className="flex items-center gap-2 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors"
+                                className="flex items-center gap-2 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors"
                                 onClick={() => setSelectedEvent(null)}
                             >
-                                <X className="w-5 h-5" /> Tutup
+                                <X className="w-5 h-5" /> Batalkan
                             </button>
                             <button
-                                className="flex items-center gap-2 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors"
-                                onClick={() => console.log(`Lanjutkan ke detail acara ${selectedEvent.id}`)}
+                                className="flex items-center gap-2 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+                                onClick={() => console.log(`Attend to event ${selectedEvent.id}`)}
                             >
-                                <ArrowRight className="w-5 h-5" /> Lanjutkan
+                                <ArrowRight className="w-5 h-5" /> Attend
                             </button>
                         </div>
                     </div>
