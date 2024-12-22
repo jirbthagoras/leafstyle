@@ -1,7 +1,7 @@
 import { FirebaseError } from "firebase/app";
 import { auth, db } from "@/lib/firebase/config";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, UserCredential } from "firebase/auth";
 import Cookies from "js-cookie";
 import { signOut } from "@firebase/auth";
 
@@ -71,4 +71,11 @@ export const logoutUser = async () => {
   } catch {
     throw new Error("Gagal keluar. Silakan coba lagi nanti.");
   }
+};
+
+export const signInWithGoogle = async () => {
+  const provider = new GoogleAuthProvider();
+  const userCredential = await signInWithPopup(auth, provider);
+  await saveCookie(userCredential);
+  return userCredential.user;
 };

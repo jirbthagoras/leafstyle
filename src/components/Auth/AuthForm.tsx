@@ -1,6 +1,6 @@
 // components/Auth/AuthForm.tsx
 import { useState } from "react";
-import { signUpUser, loginUser } from "@/services/AuthService";
+import { signUpUser, loginUser, signInWithGoogle } from "@/services/AuthService";
 import { useRouter } from "next/navigation";
 interface AuthFormProps {
   mode: "signup" | "login";
@@ -22,6 +22,15 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleGoogle = async () => {
+    try {
+      await signInWithGoogle();
+      router.push("/");
+    } catch (error) {
+      setError(error instanceof Error ? `Error: ${error.message}` : 'An error occurred');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,6 +129,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       <button
         type="button"
         className="w-full py-2 mt-4 border-2 border-green-500 text-green-500 font-semibold rounded-lg hover:bg-green-100 transition-colors duration-300 transform hover:scale-105"
+        onClick={handleGoogle}
       >
         Masuk dengan Google
       </button>
