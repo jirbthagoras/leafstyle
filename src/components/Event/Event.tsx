@@ -12,7 +12,7 @@ type Event = {
     organizer: string;
     cost: string;
     image: string;
-};
+}
 
 const EventPage = () => {
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null); // Add the type here
