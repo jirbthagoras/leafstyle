@@ -74,8 +74,27 @@ export const logoutUser = async () => {
 };
 
 export const signInWithGoogle = async () => {
-  const provider = new GoogleAuthProvider();
-  const userCredential = await signInWithPopup(auth, provider);
-  await saveCookie(userCredential);
-  return userCredential.user;
+  try {
+    const provider = new GoogleAuthProvider();
+    const userCredential = await signInWithPopup(auth, provider);
+    
+    // Check if user document exists
+    const userRef = doc(db, "users", userCredential.user.uid);
+    
+    // Create user document if it doesn't exist
+    await setDoc(userRef, {
+      name: userCredential.user.displayName || "User",
+      phoneNumber: 0,
+      points: 0,
+      lastUpdated: serverTimestamp(),
+    }, { merge: true });
+    
+    await saveCookie(userCredential);
+    return userCredential.user;
+  } catch (error) {
+    if (error instanceof FirebaseError) {
+      throw new Error(getErrorMessage(error.code));
+    }
+    throw new Error("Terjadi kesalahan yang tidak diketahui.");
+  }
 };
