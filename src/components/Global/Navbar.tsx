@@ -18,7 +18,7 @@ const Navbar = () => {
                     <div className="flex items-center">
             <span className="text-green-600 text-2xl font-bold flex items-center gap-2">
               <LeafyGreen className="w-6 h-6" />
-              Greenfinity
+              Leafstyle
             </span>
                     </div>
 
