@@ -10,7 +10,6 @@ type Event = {
     details: string;
     date: string;
     organizer: string;
-    cost: string;
     image: string;
 }
 
@@ -25,7 +24,6 @@ const EventPage = () => {
             details: "Workshop ini akan diadakan secara offline di Taman Kota pada 25 Desember 2024.",
             date: "25 Desember 2024",
             organizer: "Komunitas Seni Hijau",
-            cost: "Rp50.000",
             image: "/images/community.png",
         },
         {
@@ -35,7 +33,6 @@ const EventPage = () => {
             details: "Lomba akan berlangsung online dengan pengumpulan foto melalui platform kami hingga 28 Desember 2024.",
             date: "28 Desember 2024",
             organizer: "Komunitas Fotografi Nusantara",
-            cost: "Gratis",
             image: "/images/community.png",
         },
         {
@@ -45,7 +42,6 @@ const EventPage = () => {
             details: "Seminar akan diselenggarakan secara virtual melalui Zoom Meeting pada 1 Januari 2025.",
             date: "1 Januari 2025",
             organizer: "Lembaga Lingkungan Global",
-            cost: "Rp25.000",
             image: "/images/community.png",
         },
     ];
@@ -101,9 +97,6 @@ const EventPage = () => {
                         </p>
                         <p className="text-gray-700 mb-2">
                             <strong>Panitia Penyelenggara:</strong> {selectedEvent.organizer}
-                        </p>
-                        <p className="text-gray-700 mb-4">
-                            <strong>Biaya:</strong> {selectedEvent.cost}
                         </p>
                         <div className="flex justify-end gap-4">
                             <button

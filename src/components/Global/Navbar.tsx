@@ -2,10 +2,13 @@
 import React, { useState } from 'react';
 import { LeafyGreen } from 'lucide-react';
 import { motion } from 'framer-motion';
-import StateButton from "@/components/Home/StateButton"; // Import motion
+import StateButton from "@/components/Home/StateButton";
+import {useRouter} from "next/navigation";
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false); // State untuk kontrol menu hamburger
+
+    const router = useRouter();
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -25,8 +28,13 @@ const Navbar = () => {
                     {/* Navbar Desktop */}
                     <div className="hidden md:block">
                         <div className="flex items-center space-x-6"> {/* Increase space between links */}
-                            <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Beranda</a>
+                            <button
+                                onClick={() => {router.push("/")}}
+                                className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Beranda</button>
                             <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Pohon Virtual</a>
+                            <button
+                                onClick={() => {router.push("/event")}}
+                                className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Event</button>
                             <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">AI Finity</a>
                             <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Toko</a>
                             <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Komunitas</a>
@@ -57,11 +65,16 @@ const Navbar = () => {
                     isMenuOpen ? 'block' : 'hidden'
                 } absolute top-16 left-0 right-0 bg-white/80 backdrop-blur-sm shadow-lg rounded-b-lg md:hidden`}>
                 <div className="flex flex-col items-start space-y-6 py-4 px-6">
-                    <a className="text-green-700 text-lg px-3 py-2 font-medium hover:text-green-800 hover:scale-105 transition-all duration-300">Beranda</a>
-                    <a className="text-green-700 text-lg px-3 py-2 font-medium hover:text-green-800 hover:scale-105 transition-all duration-300">Pohon Virtual</a>
-                    <a className="text-green-700 text-lg px-3 py-2 font-medium hover:text-green-800 hover:scale-105 transition-all duration-300">AI Finity</a>
-                    <a className="text-green-700 text-lg px-3 py-2 font-medium hover:text-green-800 hover:scale-105 transition-all duration-300">Komunitas</a>
-                    <StateButton />
+                    <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Beranda</a>
+                    <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Pohon
+                        Virtual</a>
+                    <a href={"/login"}
+                        className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Event</a>
+                    <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">AI
+                        Finity</a>
+                    <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Toko</a>
+                    <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Komunitas</a>
+                    <StateButton/>
                 </div>
             </motion.div>
         </nav>
