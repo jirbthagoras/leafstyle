@@ -9,8 +9,8 @@ const jakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Greenfinity",
-  description: "Greenfinity: Go Beyond The Greens",
+    title: "Leafstyle",
+    description: "Healthy Lifestyle Healthy Earth",
 };
 
 export default function AuthLayout({

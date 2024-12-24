@@ -29,7 +29,7 @@ export default function StateButton() {
     };
 
     const handleLogin = () => {
-        router.push("/sign-up");
+        router.push("/auth");
     }
     if (isLoading) {
         return <button

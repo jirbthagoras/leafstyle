@@ -22,8 +22,6 @@ const HomePage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-green-400 to-yellow-100">
-            <Navbar /> {/* Tambahkan Navbar */}
-
             {/* Hero Section */}
             <div className="pt-16 pb-12 md:pt-24 md:pb-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
