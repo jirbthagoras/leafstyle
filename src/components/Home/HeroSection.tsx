@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef } from 'react';
+import { motion } from 'framer-motion'; // Import motion dari Framer Motion
 import Navbar from '@/components/Global/Navbar';
 
 const HomePage = () => {
@@ -23,7 +24,12 @@ const HomePage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-green-400 to-yellow-100">
             {/* Hero Section */}
-            <div className="pt-16 pb-12 md:pt-24 md:pb-20">
+            <motion.div
+                className="pt-16 pb-12 md:pt-24 md:pb-20"
+                initial={{ opacity: 0, y: 50 }} // Initial position: invisible and slightly below
+                animate={{ opacity: 1, y: 0 }} // Animasi saat muncul
+                transition={{ duration: 1, ease: "easeOut" }} // Durasi dan easing animasi
+            >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-12">
 
@@ -55,7 +61,7 @@ const HomePage = () => {
                                 {/* Tree Trunk */}
                                 <path d="M180 500 Q200 480 220 500 L220 400 Q200 380 180 400 Z" fill="#8B4513" />
                                 {/* Tree Leaves - Animated */}
-                                <g className="animate-[bounce_3s_ease-in-out_infinite]">
+                                <g className="animate-[bounce_2s_ease-in-out_infinite]">
                                     <circle cx="200" cy="300" r="100" fill="#2F855A" />
                                     <circle cx="150" cy="250" r="85" fill="#2F855A" />
                                     <circle cx="250" cy="240" r="80" fill="#2F855A" />
@@ -71,17 +77,16 @@ const HomePage = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Card Tata Cara Menanam Pohon Virtual (Conditional Rendering) */}
             {showGuide && (
-                <div
+                <motion.div
                     ref={guideRef}
-                    className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white shadow-lg rounded-lg mt-10 transition-all duration-1000 ease-in-out"
-                    style={{
-                        opacity: guideStep ? 1 : 0,
-                        transform: guideStep ? "translateY(0)" : "translateY(50px)" // Effect durasi
-                    }}
+                    className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white shadow-lg rounded-lg mt-10"
+                    initial={{ opacity: 0, y: 50 }} // Initial position: invisible and slightly below
+                    animate={{ opacity: guideStep ? 1 : 0, y: guideStep ? 0 : 50 }} // Animasi saat tampil
+                    transition={{ duration: 0.8, ease: "easeOut" }} // Durasi dan easing animasi
                 >
                     <h2 className="text-3xl font-semibold text-center text-green-800 mb-6">Tata Cara Menanam Pohon Virtual</h2>
                     <p className="text-lg text-gray-600 mb-4">
@@ -104,7 +109,7 @@ const HomePage = () => {
                             Ayo Tanam Pohon Virtual
                         </button>
                     </div>
-                </div>
+                </motion.div>
             )}
 
         </div>

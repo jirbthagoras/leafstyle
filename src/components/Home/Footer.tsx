@@ -12,6 +12,7 @@ import {
     ArrowUp,
     Heart
 } from 'lucide-react';
+import { LeafyGreen } from 'lucide-react';
 
 const Footer = () => {
     const [emailSubscribe, setEmailSubscribe] = useState("");
@@ -37,7 +38,8 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                     {/* Brand Section */}
                     <div className="space-y-4">
-                        <h3 className="text-2xl font-bold">GreenFinity</h3>
+                        <h3 className="text-2xl font-bold flex items-center gap-2"> <LeafyGreen className="w-6 h-6" />
+                            Leafstyle</h3>
                         <p className="text-gray-300">
                             Platform jual beli barang bekas dan karya seni terpercaya
                         </p>
