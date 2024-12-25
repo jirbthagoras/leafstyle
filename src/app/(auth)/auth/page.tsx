@@ -7,8 +7,8 @@ export default function SignUpPage() {
   const [isSignUp, setIsSignUp] = useState(true);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-400 via-green-500 to-yellow-300 py-16 px-6">
-      <div className="max-w-xl mx-auto bg-green-200 p-8 rounded-xl shadow-lg transform transition-all hover:scale-105">
+    <div className="bg-gradient-to-b from-green-400 via-green-500 to-yellow-300 py-16 px-6 min-h-screen flex justify-center items-center">
+      <div className="w-full max-w-xl bg-green-200 p-8 rounded-xl shadow-lg transform transition-all hover:scale-105">
         <h2 className="text-3xl font-extrabold text-center text-green-800 mb-8">
           {isSignUp ? "Daftar Akun" : "Masuk"}
         </h2>
@@ -19,9 +19,7 @@ export default function SignUpPage() {
         {/* Toggle between Sign Up and Sign In */}
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            {isSignUp
-              ? "Sudah punya akun? "
-              : "Belum punya akun? "}
+            {isSignUp ? "Sudah punya akun? " : "Belum punya akun? "}
             <button
               onClick={() => setIsSignUp(!isSignUp)}
               className="text-green-500 font-semibold hover:text-green-600 transition-colors duration-300"

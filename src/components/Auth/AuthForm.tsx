@@ -89,7 +89,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto px-4 sm:px-0 transition-all duration-300">
+    <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-xl sm:max-w-md mx-auto px-4 sm:px-0 transition-all duration-300">
       {error && (
         <div className="p-4 text-red-700 bg-red-100 border border-red-500 rounded" role="alert" aria-live="assertive">
           {error}

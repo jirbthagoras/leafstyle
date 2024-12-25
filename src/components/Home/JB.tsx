@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion"; // Import Framer Motion
 
 const HeroSection = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -34,24 +35,34 @@ const HeroSection = () => {
         <section className="flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-green-400 to-yellow-100 p-4 md:p-6">
             <div className="container mx-auto max-w-7xl flex flex-col md:flex-row items-center justify-beetween md:gap-x-48">
                 {/* Kiri: Teks Ajakan */}
-                <div className="w-full md:w-1/2 px-2 md:px-8 mb-6 md:mb-0">
-                    <h1 className="text-2xl md:text-6xl font-bold text-green-600 mb-3 md:mb-6 text-justify md:text-left">
+                <motion.div
+                    className="w-full md:w-1/2 px-2 md:px-8 mb-6 md:mb-0"
+                    initial={{ x: -100, opacity: 0 }} // Initial position off screen to the left
+                    animate={{ x: 0, opacity: 1 }} // Final position at the normal place
+                    transition={{ duration: 1 }} // Duration for animation
+                >
+                    <h1 className="text-4xl md:text-6xl font-extrabold text-green-600 mb-3 md:mb-6 text-center md:text-left">
                         Jual & Beli Barang Bekas atau Karya Seni di sini!
                     </h1>
-                    <p className="text-sm md:text-lg font-semibold text-green-800 mb-4 md:mb-8 text-center md:text-left">
+                    <p className="text-lg md:text-xl font-normal text-green-800 mb-4 md:mb-8 text-center md:text-left">
                         Temukan barang bekas yang masih berkualitas atau jual karya seni Anda
                         kepada penggemar seni. Bergabunglah dengan kami untuk berbagi dan
                         membeli!
                     </p>
                     <div className="flex justify-center md:justify-start">
-                        <button className="bg-green-500 text-white px-4 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-lg hover:bg-yellow-400 transition-all duration-300 transform hover:scale-105">
+                        <button className="bg-green-500 text-white px-6 py-4 md:px-6 md:py-3 text-lg md:text-xl rounded-lg hover:bg-yellow-400 transition-all duration-300 transform hover:scale-105">
                             Mulai Jual & Beli
                         </button>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Kanan: Card yang bisa digeser */}
-                <div className="w-full md:w-1/2 flex justify-center items-center">
+                <motion.div
+                    className="w-full md:w-1/2 flex justify-center items-center"
+                    initial={{ x: 100, opacity: 0 }} // Initial position off screen to the right
+                    animate={{ x: 0, opacity: 1 }} // Final position at the normal place
+                    transition={{ duration: 1 }} // Duration for animation
+                >
                     {/* Mobile: Carousel */}
                     <div className="md:hidden w-full flex overflow-x-auto space-x-4 justify-center">
                         {cards.map((card) => (
@@ -107,7 +118,7 @@ const HeroSection = () => {
                             })}
                         </div>
                     </div>
-                </div>
+                </motion.div>
             </div>
         </section>
     );

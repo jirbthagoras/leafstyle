@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Camera, Recycle, MapPin } from "lucide-react";
+import { motion } from "framer-motion"; // Import Framer Motion
 
 const AISection = () => {
     const steps = [
@@ -22,26 +23,50 @@ const AISection = () => {
     ];
 
     return (
-        <section className="bg-gradient-to-b from-yellow-100 to-green-400 py-16" id="ai-section">
+        <section
+            className="bg-gradient-to-b from-yellow-100 to-green-400 py-16"
+            id="ai-section"
+        >
             <div className="max-w-7xl mx-auto px-6 sm:px-8">
-                {/* Hero Section */}
-                <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+                {/* Hero Section with Framer Motion Animation */}
+                <motion.div
+                    className="flex flex-col md:flex-row items-center justify-between gap-12"
+                    initial={{ opacity: 0, y: -50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1 }}
+                    viewport={{ once: true }} // Trigger only once when it enters view
+                >
                     <div className="md:w-1/2 space-y-6 px-4 sm:px-6">
-                        <h2 className="text-2xl sm:text-4xl font-bold text-green-600 animate-fade-in">
-                            AI Kami: Solusi Cerdas untuk Lingkungan
-                        </h2>
-                        <p className="text-lg text-gray-700 leading-relaxed">
+                        <motion.h2
+                            className="text-6xl sm:text-8xl font-bold text-green-600"
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ duration: 1, delay: 0.2 }}
+                            viewport={{ once: true }} // Trigger only once when it enters view
+                        >
+                            AI Lye
+                        </motion.h2>
+                        <motion.p
+                            className="text-lg text-gray-700 leading-relaxed"
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ duration: 1, delay: 0.4 }}
+                            viewport={{ once: true }} // Trigger only once when it enters view
+                        >
                             AI kami hadir untuk membantu Anda menjaga lingkungan dengan cara yang lebih cerdas.
                             Dengan teknologi canggih, AI kami dapat melakukan scanning sampah dan memberi tahu Anda
                             tempat daur ulang terdekat di sekitar Anda.
-                        </p>
-                        <button
+                        </motion.p>
+                        <motion.button
                             className="w-full sm:w-auto bg-green-600 text-white px-8 py-3 rounded-full font-semibold
-                         hover:bg-green-700 transition-colors duration-300
-                         transform hover:scale-105 active:scale-95"
+                             hover:bg-green-700 transition-colors duration-300 transform hover:scale-105 active:scale-95"
+                            initial={{ scale: 0.9 }}
+                            whileInView={{ scale: 1 }}
+                            transition={{ duration: 0.3 }}
+                            viewport={{ once: true }} // Trigger only once when it enters view
                         >
                             Mulai Scanning
-                        </button>
+                        </motion.button>
                     </div>
 
                     <div className="md:w-1/2 relative w-full">
@@ -63,36 +88,56 @@ const AISection = () => {
                             </p>
                         </div>
                     </div>
-                </div>
+                </motion.div>
 
-                {/* Interactive Steps */}
-                <div className="mt-24">
+                {/* Interactive Steps with Framer Motion Animation */}
+                <motion.div
+                    className="mt-24"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 1, delay: 0.6 }}
+                    viewport={{ once: true }} // Trigger only once when it enters view
+                >
                     <h3 className="text-2xl font-bold text-center text-green-600 mb-12">
                         Cara Kerja AI Finity
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
                         {steps.map((step, index) => (
-                            <div
+                            <motion.div
                                 key={index}
                                 className="p-6 rounded-xl transition-all duration-300 cursor-pointer
                           bg-white hover:bg-green-600 hover:scale-105 hover:shadow-lg group"
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: index * 0.2 }}
+                                viewport={{ once: true }} // Trigger only once when it enters view
                             >
                                 <div className="flex flex-col items-center text-center space-y-4">
-                                    <div
+                                    <motion.div
                                         className="w-16 h-16 rounded-full flex items-center justify-center
                                 bg-green-100 text-green-600 group-hover:bg-white group-hover:text-green-600"
+                                        whileHover={{ scale: 1.2 }}
+                                        transition={{ duration: 0.3 }}
                                     >
                                         {step.icon}
-                                    </div>
-                                    <h4 className="text-xl font-semibold text-green-600 group-hover:text-white">
+                                    </motion.div>
+                                    <motion.h4
+                                        className="text-xl font-semibold text-green-600 group-hover:text-white"
+                                        whileHover={{ scale: 1.1 }}
+                                    >
                                         {step.title}
-                                    </h4>
-                                    <p className="text-gray-600 group-hover:text-white">{step.description}</p>
+                                    </motion.h4>
+                                    <motion.p
+                                        className="text-gray-600 group-hover:text-white"
+                                        whileHover={{ scale: 1.1 }}
+                                    >
+                                        {step.description}
+                                    </motion.p>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
-                </div>
+                </motion.div>
             </div>
         </section>
     );

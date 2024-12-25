@@ -1,22 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-    collection,
-    getDocs,
-    query,
-    where,
-    orderBy,
-    QuerySnapshot,
-    DocumentData,
-} from "firebase/firestore";
-import {auth, db} from "@/lib/firebase/config";
+import { collection, getDocs, query, orderBy, QuerySnapshot, DocumentData, where } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase/config";
 import { Calendar } from "lucide-react";
-import {onAuthStateChanged} from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
+import { ArrowRight } from "lucide-react";
+import { MessageCircle } from "lucide-react";
+import { Users } from "lucide-react";
+import { motion } from "framer-motion"; // Import motion
 
-// Define the Event type
 export type Event = {
-    id: string; // Firestore document ID
+    id: string;
     eventType: string;
     contactNumber: string;
     location: string;
@@ -42,11 +37,7 @@ export const fetchEvents = async (userId: string | null): Promise<Event[]> => {
 
         if (userId) {
             const attendanceCollection = collection(db, "attendance");
-
-            const attendanceQuery = query(
-                attendanceCollection,
-                where("userId", "==", userId)
-            );
+            const attendanceQuery = query(attendanceCollection, where("userId", "==", userId));
             const attendanceSnapshot: QuerySnapshot<DocumentData> = await getDocs(attendanceQuery);
 
             const attendedEventIds = new Set(
@@ -62,35 +53,38 @@ export const fetchEvents = async (userId: string | null): Promise<Event[]> => {
         return events;
     } catch (error) {
         console.error("Error fetching events: ", error);
-        throw error;
+        throw new Error("Failed to fetch events");
     }
 };
 
 const CommunitySection = () => {
     const [events, setEvents] = useState<Event[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [userId, setUserId] = useState<string | null>(null); // State to hold userId
+    const [userId, setUserId] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null); // State for error handling
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                setUserId(user.uid); // Set userId if user is logged in
+                setUserId(user.uid);
             } else {
-                setUserId(null); // Clear userId if no user is logged in
+                setUserId(null);
             }
         });
 
-        return () => unsubscribe(); // Cleanup on unmount
+        return () => unsubscribe();
     }, []);
 
     useEffect(() => {
         const fetchAndSetEvents = async () => {
             setIsLoading(true);
+            setError(null); // Reset error state before fetching
             try {
                 const fetchedEvents = await fetchEvents(userId);
                 setEvents(fetchedEvents);
             } catch (error) {
                 console.error("Failed to fetch events", error);
+                setError("Gagal memuat data event. Coba lagi nanti.");
             } finally {
                 setIsLoading(false);
             }
@@ -100,35 +94,84 @@ const CommunitySection = () => {
     }, [userId]);
 
     return (
-        <section className="min-h-screen bg-gradient-to-b from-yellow-50 to-green-100 py-16 px-4 md:px-8">
+        <section className="min-h-screen bg-gradient-to-b from-yellow-100 to-green-100 py-16 px-4 md:px-8">
             <div className="container mx-auto max-w-6xl">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold text-green-600 mb-4">
+                    <motion.h2
+                        className="text-3xl md:text-4xl font-bold text-green-600 mb-4"
+                        initial={{ opacity: 0, y: -50 }} // Mulai dari opacity 0 dan posisi vertikal di atas
+                        animate={{ opacity: 1, y: 0 }} // Pindah ke posisi normal dan opacity 1
+                        transition={{ duration: 1 }}
+                    >
                         Bergabung dengan Komunitas Kami
-                    </h2>
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                    </motion.h2>
+                    <motion.p
+                        className="text-lg text-green-800 max-w-2xl mx-auto"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 1, delay: 0.5 }}
+                    >
                         Temukan teman baru, berbagi pengalaman, dan ikuti event-event menarik bersama komunitas kami.
-                    </p>
+                    </motion.p>
                 </div>
+
                 <div className="grid md:grid-cols-2 gap-8">
-                    <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <motion.div
+                        className="bg-white rounded-2xl shadow-lg p-6 md:p-8 transform transition-all hover:scale-105 hover:shadow-xl"
+                        initial={{ opacity: 0, x: -100 }} // Mulai dari posisi kiri
+                        animate={{ opacity: 1, x: 0 }} // Pindah ke posisi normal
+                        transition={{ duration: 1 }}
+                    >
+                        <div className="flex items-center mb-6">
+                            <MessageCircle className="w-8 h-8 text-green-500 mr-3" />
+                            <h3 className="text-2xl font-semibold text-gray-800">Chat Komunitas</h3>
+                        </div>
+                        <img
+                            src="./image/community.png"
+                            alt="Gambar Chat Komunitas"
+                            className="w-full h-40 rounded-lg mb-6 object-cover"
+                        />
+                        <p className="text-gray-600 mb-6">
+                            Bergabunglah dalam obrolan seru bersama para kolektor, seniman, dan pecinta barang vintage.
+                            Diskusikan tentang hobi, berbagi tips, atau temukan barang impianmu!
+                        </p>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-end">
+                                <Users className="w-5 h-5 text-green-500 mr-2" />
+                                <span className="text-sm text-gray-500">1.2k+ Members Online</span>
+                            </div>
+                            <button className="flex items-center text-green-500 hover:text-green-600 font-medium transform transition-all hover:translate-x-1">
+                                Gabung Chat <ArrowRight className="w-4 h-4 ml-2" />
+                            </button>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        className="bg-white rounded-2xl shadow-lg p-6 md:p-8 transform transition-all hover:scale-105 hover:shadow-xl"
+                        initial={{ opacity: 0, x: 100 }} // Mulai dari posisi kanan
+                        animate={{ opacity: 1, x: 0 }} // Pindah ke posisi normal
+                        transition={{ duration: 1 }}
+                    >
                         <div className="flex items-center mb-6">
                             <Calendar className="w-8 h-8 text-green-500 mr-3" />
                             <h3 className="text-2xl font-semibold text-gray-800">Event Mendatang</h3>
                         </div>
                         {isLoading ? (
                             <p className="text-center text-gray-600">Memuat...</p>
+                        ) : error ? (
+                            <p className="text-center text-red-600">{error}</p> // Tampilkan error di UI
                         ) : events.length > 0 ? (
                             <div className="space-y-4">
                                 {events.map((event) => (
-                                    <div
+                                    <motion.div
                                         key={event.id}
                                         className="border-l-4 border-green-500 pl-4 py-2 transform transition-all hover:scale-105 hover:bg-green-50 rounded-lg"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 0.5 }}
                                     >
                                         <div className="flex items-center justify-between">
-                                            <h4 className="font-semibold text-gray-800">
-                                                {event.title}
-                                            </h4>
+                                            <h4 className="font-semibold text-gray-800">{event.title}</h4>
                                             {event.isAttended && (
                                                 <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">
                                                     Attended
@@ -149,16 +192,14 @@ const CommunitySection = () => {
                                                 {event.eventType}
                                             </span>
                                         </div>
-                                        <div className="text-sm text-gray-500 mt-1">
-                                            📍 {event.location}
-                                        </div>
-                                    </div>
+                                        <div className="text-sm text-gray-500 mt-1">📍 {event.location}</div>
+                                    </motion.div>
                                 ))}
                             </div>
                         ) : (
                             <p className="text-center text-gray-600">Tidak ada event tersedia.</p>
                         )}
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </section>

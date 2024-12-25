@@ -4,13 +4,14 @@ import { ArrowRight, X } from "lucide-react";
 import { Event, fetchEvents } from "@/services/EventService";
 import { addAttendance, deleteAttendance } from "@/services/AttendanceService";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {collection, getDocs, query, where} from "firebase/firestore";
-import {db} from "@/lib/firebase/config";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
 
 const EventPage = () => {
     const [events, setEvents] = useState<Event[]>([]);
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
     const [showForm, setShowForm] = useState(false);
+    const [isDetailView, setIsDetailView] = useState(false);
     const [formData, setFormData] = useState({ nama: "", kontak: "" });
     const [userId, setUserId] = useState<string | null>(null);
     const [userAttendances, setUserAttendances] = useState<Record<string, boolean>>({});
@@ -19,7 +20,7 @@ const EventPage = () => {
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            console.log(user?.uid)
+            console.log(user?.uid);
             if (user) {
                 setUserId(user.uid);
             } else {
@@ -67,8 +68,6 @@ const EventPage = () => {
         fetchUserAttendances();
     }, [userId]);
 
-
-
     const handleFormSubmit = async () => {
         if (!selectedEvent || !userId) {
             alert("You must be logged in to attend an event.");
@@ -114,8 +113,8 @@ const EventPage = () => {
     };
 
     return (
-        <section className="min-h-screen bg-gradient-to-b from-yellow-50 to-green-100 py-16 px-4 md:px-8">
-            <div className="container mx-auto max-w-6xl">
+        <section className="min-h-screen bg-gradient-to-b from-yellow-100 to-green-100 py-16 px-4 md:px-8">
+            <div className="container mx-auto max-w-6xl mt-20">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold text-green-600 mb-4">Acara Mendatang</h2>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -145,35 +144,36 @@ const EventPage = () => {
                                 className="absolute bottom-0 left-0 w-full bg-green-50 text-gray-700 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out">
                                 <p className="text-sm">{event.details}</p>
                                 {userAttendances[event.id.toString()] ? (
-
-                                        <div>
-                                            <button
-                                                className="mt-4 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors"
-                                                onClick={() => handleCancelAttendance(event.id.toString())}
-                                            >
-                                                Cancel
-                                            </button>
-
-                                        </div>
-
+                                    <div>
+                                        <button
+                                            className="mt-4 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors"
+                                            onClick={() => handleCancelAttendance(event.id.toString())}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
                                 ) : (
                                     <div>
                                         <button
                                             className="mt-4 w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
-                                            onClick={() => setSelectedEvent(event)}
+                                            onClick={() => {
+                                                setSelectedEvent(event);
+                                                setIsDetailView(true);
+                                            }}
                                         >
                                             Detail
                                         </button>
                                         <button
-                                            className="mt-4 w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
-                                            onClick={() => setSelectedEvent(event)}
+                                            className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                                            onClick={() => {
+                                                setSelectedEvent(event);
+                                                setIsDetailView(false);
+                                            }}
                                         >
                                             Attend
                                         </button>
                                     </div>
-
                                 )}
-
                             </div>
                         </div>
                     ))}
@@ -189,30 +189,35 @@ const EventPage = () => {
                             <strong>Tanggal:</strong> {selectedEvent.date}
                         </p>
                         <p className="text-gray-700 mb-2">
-                        <strong>Panitia Penyelenggara:</strong> {selectedEvent.organizer}
+                            <strong>Panitia Penyelenggara:</strong> {selectedEvent.organizer}
                         </p>
                         <p className="text-gray-700 mb-2">
-                        <strong>Contact Number: </strong> {selectedEvent.contactNumber}
+                            <strong>Contact Number: </strong> {selectedEvent.contactNumber}
                         </p>
                         <p className="text-gray-700 mb-2">
-                        <strong>Location: </strong> {selectedEvent.location}
+                            <strong>Location: </strong> {selectedEvent.location}
                         </p>
                         <p className="text-gray-700 mb-2">
-                        <strong>Type: </strong> {selectedEvent.eventType}
+                            <strong>Type: </strong> {selectedEvent.eventType}
+                        </p>
+                        <p className="text-gray-700 mb-4">
+                            <strong>Description: </strong> {selectedEvent.description}
                         </p>
                         <div className="flex justify-end gap-4">
                             <button
-                                className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors"
+                                className="bg-red-500 flex items-center text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors"
                                 onClick={() => setSelectedEvent(null)}
                             >
-                                <X /> Batalkan
+                                <X /> Close
                             </button>
-                            <button
-                                className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
-                                onClick={() => setShowForm(true)}
-                            >
-                                <ArrowRight /> Attend
-                            </button>
+                            {!isDetailView && (
+                                <button
+                                    className="bg-blue-500 flex items-center text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+                                    onClick={() => setShowForm(true)}
+                                >
+                                    <ArrowRight /> Attend
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -247,7 +252,7 @@ const EventPage = () => {
                             <div className="flex justify-end gap-4">
                                 <button
                                     type="button"
-                                    className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors"
+                                    className="bg-red-500 flex justify-center text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors"
                                     onClick={() => setShowForm(false)}
                                 >
                                     <X /> Batal
