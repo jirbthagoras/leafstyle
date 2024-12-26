@@ -22,7 +22,7 @@ const HomePage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-green-400 to-yellow-100">
+        <div className="min-h-screen bg-gradient-to-br from-green-400 via-green-300 to-yellow-100">
             {/* Hero Section */}
             <motion.div
                 className="pt-16 pb-12 md:pt-24 md:pb-20"
