@@ -94,7 +94,7 @@ const CommunitySection = () => {
     }, [userId]);
 
     return (
-        <section className="min-h-screen bg-gradient-to-b from-yellow-100 to-green-100 py-16 px-4 md:px-8">
+        <section className="min-h-screenabsolute inset-0 bg-gradient-to-tr from-green-400 via-green-300 to-yellow-200 py-16 px-4 md:px-8">
             <div className="container mx-auto max-w-6xl">
                 <div className="text-center mb-16">
                     <motion.h2

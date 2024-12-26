@@ -113,7 +113,7 @@ const EventPage = () => {
     };
 
     return (
-        <section className="min-h-screen bg-gradient-to-b from-yellow-100 to-green-100 py-16 px-4 md:px-8">
+        <section className="min-h-screen bg-gradient-to-br from-green-200 to-yellow-50 py-16 px-4 md:px-8">
             <div className="container mx-auto max-w-6xl mt-20">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold text-green-600 mb-4">Acara Mendatang</h2>

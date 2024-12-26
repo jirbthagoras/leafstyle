@@ -1,10 +1,11 @@
-'use client'    
+'use client'
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { uploadImage } from '@/services/UploadImgService';
 import { analyzeImage } from '@/services/AnalyzeImgService';
-import { Camera, X } from 'lucide-react';
+import { Camera, X, Upload, Clock, Leaf, Shield,} from 'lucide-react';
+import { motion } from 'framer-motion';  // Import motion from framer-motion
 
 interface RecyclingSuggestion {
   title: string;
@@ -27,13 +28,23 @@ const ImageUpload = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string>('');
+  const [errorDetail, setErrorDetail] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  // Scroll ke hasil analisis setelah gambar diunggah
+  useEffect(() => {
+    if (result) {
+      resultRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [result]);
 
   const handleImageUpload = async (file: File) => {
     try {
       setLoading(true);
       setError('');
-      
+      setErrorDetail('');
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setImage(e.target?.result as string);
@@ -41,20 +52,30 @@ const ImageUpload = () => {
       reader.readAsDataURL(file);
 
       const imageUrl = await uploadImage(file);
-      console.log('Uploaded image URL:', imageUrl);
-
       const analysis = await analyzeImage(imageUrl);
-      console.log('Analysis result:', analysis);
 
       if (!analysis) {
-        throw new Error('Tidak ada hasil analisis yang diterima');
+        throw new Error('Tidak ada hasil analisis yang diterima.');
       }
 
       setResult(analysis);
-      
     } catch (error) {
       console.error('Error in handleImageUpload:', error);
-      setError(error instanceof Error ? error.message : 'Terjadi kesalahan');
+
+      if (error instanceof Error) {
+        if (error.message.includes('format')) {
+          setError('Format gambar tidak diterima');
+          setErrorDetail('Coba unggah gambar dengan format JPG, PNG, atau JPEG.');
+        } else if (error.message.includes('clear')) {
+          setError('Gambar terlalu buram atau tidak jelas.');
+          setErrorDetail('Coba unggah gambar yang lebih jelas atau lebih terang.');
+        } else {
+          setError('Terjadi kesalahan dalam proses unggah atau analisis gambar.');
+          setErrorDetail('Pastikan gambar yang diunggah jelas dan dalam format yang didukung.');
+        }
+      } else {
+        setError('Terjadi kesalahan yang tidak terduga.');
+      }
     } finally {
       setLoading(false);
     }
@@ -67,122 +88,188 @@ const ImageUpload = () => {
     }
   };
 
+  const handleClear = () => {
+    setImage(null);
+    setResult(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   return (
-    <div className="max-w-6xl mx-auto p-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Left Column - Image Upload */}
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-green-600">Analisis Sampah</h2>
-          
-          {!image ? (
-            <label className="flex flex-col items-center justify-center p-12 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50 transition-all duration-300">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              <Camera className="w-12 h-12 mb-4 text-green-600" />
-              <span className="text-lg text-gray-600 font-medium">Ambil atau Upload Foto</span>
-              <span className="text-sm text-gray-500 mt-2">Klik untuk memilih gambar</span>
-            </label>
-          ) : (
-            <div className="relative">
-              <div className="relative aspect-square w-full">
-                <Image
-                  src={image}
-                  alt="Preview"
-                  fill
-                  className="object-cover rounded-lg"
-                />
-              </div>
-              <button
-                onClick={() => {
-                  setImage(null);
-                  setResult(null);
-                  if (fileInputRef.current) {
-                    fileInputRef.current.value = '';
-                  }
-                }}
-                className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-300"
-              >
-                <X className="w-5 h-5 text-gray-600" />
-              </button>
-            </div>
-          )}
+    <div className="min-h-screen bg-gradient-to-br from-green-200 to-yellow-50 py-12">
+      <div className="max-w-6xl mx-auto px-4 mt-20">
+        <motion.div
+         initial={{ opacity: 0 }}
+         animate={{ opacity: 1 }}
+         transition={{ duration: 0.5 }}>
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-green-700 mb-2">Analisis Sampah</h1>
+          <p className="text-gray-600">Upload foto sampah Anda untuk mendapatkan saran daur ulang yang tepat</p>
         </div>
+        </motion.div>
 
-        {/* Right Column - Analysis Results */}
-        <div className="space-y-6">
-          {loading && (
-            <div className="flex items-center justify-center p-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600" />
-              <span className="ml-3 text-green-600">Menganalisis gambar...</span>
-            </div>
-          )}
 
+        <div className="grid grid-cols-1 gap-8">
+          {/* Image Upload Section */}
+          <motion.div
+            className="p-6 border rounded-lg bg-white shadow-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-green-700 mb-4">
+              <Upload className="w-5 h-5 text-green-600" /> Upload Gambar
+            </h2>
+            {!image ? (
+              <label className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-green-200 rounded-lg cursor-pointer hover:bg-green-50 transition-all duration-300 hover:scale-105 transform">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <Camera className="w-16 h-16 mb-4 text-green-600 animate-bounce" />
+                <span className="text-lg text-gray-700 font-medium">Ambil atau Upload Foto</span>
+                <span className="text-sm text-gray-500 mt-2">Klik untuk memilih gambar</span>
+              </label>
+            ) : (
+              <div className="relative group">
+                <div className="relative aspect-square w-full max-w-[80%] lg:max-w-[50%] mx-auto rounded-lg overflow-hidden">
+                  <Image
+                    src={image}
+                    alt="Preview"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-all duration-500 ease-in-out transform"
+                  />
+                </div>
+                <button
+                  onClick={handleClear}
+                  className="absolute top-2 right-2 bg-white/90 p-2 rounded-full shadow-lg hover:bg-white transition-colors duration-300"
+                >
+                  <X className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
+            )}
+          </motion.div>
+
+          {/* Error Handling Section */}
           {error && (
-            <div className="p-4 bg-red-100 text-red-700 rounded-lg">
-              {error}
-            </div>
+            <motion.div
+              className="p-6 border rounded-lg bg-red-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h3 className="text-red-700 text-center text-lg font-semibold">Terjadi Kesalahan</h3>
+              <p className="text-red-700 text-center">{error}</p>
+              {errorDetail && <p className="text-red-600 text-center text-sm mt-2">{errorDetail}</p>}
+            </motion.div>
           )}
 
-          {result && (
-            <div className="space-y-6">
-              {result.suggestions?.length > 0 && (
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-semibold mb-4">Saran Daur Ulang</h3>
-                  <div className="space-y-4">
-                    {result.suggestions.map((suggestion, index) => (
-                      <div
-                        key={index}
-                        className="p-4 bg-gray-50 rounded-lg transition-all duration-300 hover:shadow-lg group"
-                      >
-                        {/* Condensed View */}
-                        <div className="flex justify-between items-start">
-                          <h4 className="font-medium text-lg">{suggestion.title}</h4>
-                          <span className="text-sm text-gray-500">Hover untuk detail</span>
+          {/* Analysis Results Section */}
+          <motion.div
+            className="space-y-6"
+            ref={resultRef}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            {loading && (
+              <motion.div
+                className="p-6 border rounded-lg bg-white shadow-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="flex flex-col items-center justify-center p-8">
+                  <div className="w-full max-w-xs space-y-4">
+                    <div className="h-2 bg-green-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-green-600 animate-pulse" style={{ width: '30%' }}></div>
+                    </div>
+                    <p className="text-center text-green-600">Menganalisis gambar...</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {result && result.suggestions?.length > 0 && (
+              <motion.div
+                className="p-6 border rounded-lg bg-white shadow-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <h2 className="text-xl font-semibold text-green-700 mb-4">Saran Daur Ulang</h2>
+                <div className="space-y-4">
+                  {result.suggestions.map((suggestion, index) => (
+                    <motion.div
+                      key={index}
+                      className="p-4 border rounded-lg bg-green-50 group hover:shadow-xl transition-all duration-300 hover:bg-green-50 hover:scale-105 transform"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5, delay: index * 0.2 }}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold text-lg text-gray-800">{suggestion.title}</h4>
+                        <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                          Nilai: Rp {suggestion.value.toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-4">{suggestion.description}</p>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-gray-400" />
+                          <span>{suggestion.timeRequired}</span>
                         </div>
-                        
-                        {/* Expanded View - Visible on Hover */}
-                        <div className="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 transition-all duration-300 overflow-hidden">
-                          <p className="text-gray-600 mt-2 mb-2">{suggestion.description}</p>
-                          <div className="grid grid-cols-2 gap-4 text-sm mt-4">
-                            <div>
-                              <span className="font-medium">Nilai:</span> Rp {suggestion.value.toLocaleString()}
-                            </div>
-                            <div>
-                              <span className="font-medium">Kesulitan:</span> {suggestion.difficulty}/100
-                            </div>
-                            <div>
-                              <span className="font-medium">Waktu:</span> {suggestion.timeRequired}
-                            </div>
-                            <div>
-                              <span className="font-medium">Bahan:</span> {suggestion.materials.join(", ")}
-                            </div>
-                            <div className="col-span-2">
-                              <span className="font-medium">Manfaat Lingkungan:</span>
-                              <p className="mt-1">{suggestion.environmentalBenefit}</p>
-                            </div>
-                            <div className="col-span-2">
-                              <span className="font-medium">Tips Keamanan:</span>
-                              <p className="mt-1">{suggestion.safetyTips}</p>
-                            </div>
+                        <div className="flex items-center gap-2">
+                          <div className="h-2 bg-gray-200 rounded-full w-full overflow-hidden">
+                            <div
+                              className="h-full bg-green-500"
+                              style={{ width: `${suggestion.difficulty}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs text-gray-500">{suggestion.difficulty}%</span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 gap-3 pt-2">
+                        <div className="flex items-start gap-2">
+                          <Leaf className="w-5 h-5 text-green-500 mt-1 animate-spin" />
+                          <div>
+                            <p className="font-medium text-sm text-gray-700">Manfaat Lingkungan</p>
+                            <p className="text-sm text-gray-600">{suggestion.environmentalBenefit}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Shield className="w-5 h-5 text-blue-500 mt-1" />
+                          <div>
+                            <p className="font-medium text-sm text-gray-700">Tips Keamanan</p>
+                            <p className="text-sm text-gray-600">{suggestion.safetyTips}</p>
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        {suggestion.materials.map((material, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full hover:bg-green-200 transition-colors"
+                          >
+                            {material}
+                          </span>
+                        ))}
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-              )}
-            </div>
-          )}
+              </motion.div>
+            )}
+          </motion.div>
         </div>
       </div>
     </div>
   );
 };
 
-export default ImageUpload; 
+export default ImageUpload;
