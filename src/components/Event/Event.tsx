@@ -6,6 +6,7 @@ import { addAttendance, deleteAttendance } from "@/services/AttendanceService";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
+import { motion } from "framer-motion"; // Import framer-motion
 
 const EventPage = () => {
     const [events, setEvents] = useState<Event[]>([]);
@@ -15,8 +16,8 @@ const EventPage = () => {
     const [formData, setFormData] = useState({ nama: "", kontak: "" });
     const [userId, setUserId] = useState<string | null>(null);
     const [userAttendances, setUserAttendances] = useState<Record<string, boolean>>({});
+    const [activeTab, setActiveTab] = useState("deskripsi"); // State untuk tab aktif
 
-    // Fetch the user's ID from Firebase Auth
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -31,7 +32,6 @@ const EventPage = () => {
         return () => unsubscribe();
     }, []);
 
-    // Fetch events on component mount
     useEffect(() => {
         const loadEvents = async () => {
             const data = await fetchEvents();
@@ -113,7 +113,13 @@ const EventPage = () => {
     };
 
     return (
-        <section className="min-h-screen bg-gradient-to-br from-green-200 to-yellow-50 py-16 px-4 md:px-8">
+        <motion.section
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="min-h-screen bg-gradient-to-br from-green-200 to-yellow-50 py-16 px-4 md:px-8"
+        >
             <div className="container mx-auto max-w-6xl mt-20">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold text-green-600 mb-4">Acara Mendatang</h2>
@@ -122,11 +128,27 @@ const EventPage = () => {
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <motion.div
+                    className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: {
+                            opacity: 1,
+                            transition: { staggerChildren: 0.3 }
+                        }
+                    }}
+                >
                     {events.map((event) => (
-                        <div
+                        <motion.div
                             key={event.id}
                             className="group relative bg-white rounded-2xl shadow-lg overflow-hidden"
+                            variants={{
+                                hidden: { opacity: 0 },
+                                visible: { opacity: 1 }
+                            }}
+                            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
                         >
                             <div className="relative">
                                 <img
@@ -141,7 +163,8 @@ const EventPage = () => {
                             </div>
 
                             <div
-                                className="absolute bottom-0 left-0 w-full bg-green-50 text-gray-700 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out">
+                                className="absolute bottom-0 left-0 w-full bg-green-50 text-gray-700 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"
+                            >
                                 <p className="text-sm">{event.details}</p>
                                 {userAttendances[event.id.toString()] ? (
                                     <div>
@@ -175,34 +198,91 @@ const EventPage = () => {
                                     </div>
                                 )}
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             </div>
 
             {/* Modal */}
             {selectedEvent && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <motion.div
+                    className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.3 }}
+                >
                     <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2">
                         <h2 className="text-2xl font-bold text-green-600 mb-4">{selectedEvent.title}</h2>
-                        <p className="text-gray-700 mb-2">
-                            <strong>Tanggal:</strong> {selectedEvent.date}
-                        </p>
-                        <p className="text-gray-700 mb-2">
-                            <strong>Panitia Penyelenggara:</strong> {selectedEvent.organizer}
-                        </p>
-                        <p className="text-gray-700 mb-2">
-                            <strong>Contact Number: </strong> {selectedEvent.contactNumber}
-                        </p>
-                        <p className="text-gray-700 mb-2">
-                            <strong>Location: </strong> {selectedEvent.location}
-                        </p>
-                        <p className="text-gray-700 mb-2">
-                            <strong>Type: </strong> {selectedEvent.eventType}
-                        </p>
-                        <p className="text-gray-700 mb-4">
-                            <strong>Description: </strong> {selectedEvent.description}
-                        </p>
+                        <div className="mb-4">
+                            <div className="flex justify-around border-b">
+                                <button
+                                    onClick={() => setActiveTab("deskripsi")}
+                                    className={`px-4 py-2 ${activeTab === "deskripsi" ? "text-blue-500 border-b-2 border-blue-500" : "text-gray-600"}`}
+                                >
+                                    Deskripsi
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab("pembicara")}
+                                    className={`px-4 py-2 ${activeTab === "pembicara" ? "text-blue-500 border-b-2 border-blue-500" : "text-gray-600"}`}
+                                >
+                                    Pembicara
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab("jadwal")}
+                                    className={`px-4 py-2 ${activeTab === "jadwal" ? "text-blue-500 border-b-2 border-blue-500" : "text-gray-600"}`}
+                                >
+                                    Jadwal
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab("attend")}
+                                    className={`px-4 py-2 ${activeTab === "attend" ? "text-blue-500 border-b-2 border-blue-500" : "text-gray-600"}`}
+                                >
+                                    Attend
+                                </button>
+                            </div>
+                            <motion.div
+                                key={activeTab}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                {activeTab === "deskripsi" && (
+                                    <p className="text-gray-700">{selectedEvent.description}</p>
+                                )}
+                                {activeTab === "pembicara" && (
+                                    <p className="text-gray-700">{selectedEvent.speaker}</p>
+                                )}
+                                {activeTab === "jadwal" && (
+                                    <p className="text-gray-700">{selectedEvent.schedule}</p>
+                                )}
+                                {activeTab === "attend" && !userAttendances[selectedEvent.id.toString()] && (
+                                    <div>
+                                        <input
+                                            type="text"
+                                            placeholder="Your Name"
+                                            value={formData.nama}
+                                            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                                            className="w-full p-2 mb-4 border rounded-md"
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="Contact Info"
+                                            value={formData.kontak}
+                                            onChange={(e) => setFormData({ ...formData, kontak: e.target.value })}
+                                            className="w-full p-2 mb-4 border rounded-md"
+                                        />
+                                        <button
+                                            className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+                                            onClick={handleFormSubmit}
+                                        >
+                                            Submit
+                                        </button>
+                                    </div>
+                                )}
+                            </motion.div>
+                        </div>
                         <div className="flex justify-end gap-4">
                             <button
                                 className="bg-red-500 flex items-center text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors"
@@ -210,66 +290,11 @@ const EventPage = () => {
                             >
                                 <X /> Close
                             </button>
-                            {!isDetailView && (
-                                <button
-                                    className="bg-blue-500 flex items-center text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
-                                    onClick={() => setShowForm(true)}
-                                >
-                                    <ArrowRight /> Attend
-                                </button>
-                            )}
                         </div>
                     </div>
-                </div>
+                </motion.div>
             )}
-
-            {/* Popup Form */}
-            {showForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2">
-                        <h2 className="text-2xl font-bold text-green-600 mb-4">Form Pendaftaran</h2>
-                        <form className="space-y-4">
-                            <div>
-                                <label className="block text-gray-700 font-medium mb-2">Nama</label>
-                                <input
-                                    type="text"
-                                    value={formData.nama}
-                                    onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    placeholder="Masukkan nama Anda"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 font-medium mb-2">Kontak</label>
-                                <input
-                                    type="text"
-                                    value={formData.kontak}
-                                    onChange={(e) => setFormData({ ...formData, kontak: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    placeholder="Masukkan kontak Anda"
-                                />
-                            </div>
-                            <div className="flex justify-end gap-4">
-                                <button
-                                    type="button"
-                                    className="bg-red-500 flex justify-center text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors"
-                                    onClick={() => setShowForm(false)}
-                                >
-                                    <X /> Batal
-                                </button>
-                                <button
-                                    type="button"
-                                    className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors"
-                                    onClick={handleFormSubmit}
-                                >
-                                    Kirim
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-        </section>
+        </motion.section>
     );
 };
 
