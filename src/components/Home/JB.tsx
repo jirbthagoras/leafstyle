@@ -54,7 +54,7 @@ const HeroSection = () => {
             onMouseMove={handleMouseMove}
         >
             {/* Animated Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-green-400 via-green-300 to-yellow-200">
+            <div className="absolute inset-0 bg-gradient-to-b from-green-400 via-green-300 to-yellow-200">
                 <motion.div
                     className="absolute inset-0"
                     animate={{
@@ -161,7 +161,7 @@ const HeroSection = () => {
 
                 {/* Right: Interactive Cards */}
                 <motion.div
-                    className="w-full md:w-1/2 flex justify-center items-center"
+                    className="w-full md:w-1/2 flex justify-center items-center -z-10"
                     initial={{ x: 100, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 1 }}

@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Plus_Jakarta_Sans } from "next/font/google";
+import Navbar from "@/components/Global/Navbar";
 import "./globals.css";
 
 const jakartaSans = Plus_Jakarta_Sans({
-    subsets: ['latin'],
-    variable: '--font-plus-jakarta-sans'
+  subsets: ["latin"],
+  variable: "--font-plus-jakarta-sans",
 });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Leafstyle",
   description: "Healthy Lifestyle Healthy Earth",
 };
@@ -19,11 +19,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${jakartaSans.className} antialiased`}
-      >
+      <body className={`${jakartaSans.className} antialiased`}>
+        <Navbar /> {/* Navbar global */}
         {children}
       </body>
     </html>
   );
 }
+

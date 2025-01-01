@@ -28,7 +28,7 @@ const AISection = () => {
     return (
         <section className="relative overflow-hidden py-20" id="ai-section">
             {/* Animated Background */}
-            <div className="absolute inset-0 bg-gradient-to-bl from-yellow-100 via-green-300 to-green-400">
+            <div className="absolute inset-0 bg-gradient-to-b from-yellow-100 to-green-400">
                 <motion.div
                     className="absolute inset-0"
                     animate={{
