@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { PlaneIcon } from "lucide-react"; // Import ikon pesawat
+import { motion } from "framer-motion"; // Import motion dari framer-motion
 
 interface Post {
   id: number;
@@ -22,18 +23,14 @@ const CommunityPage: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState<string>("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [activePage, setActivePage] = useState("Home");
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [replyError, setReplyError] = useState<string | null>(null); // Error untuk reply
 
   const handlePost = () => {
+    // Memastikan setidaknya ada teks atau gambar yang dimasukkan
     if (!newPost.trim() && !selectedImage) {
       setError("Post content or image is required.");
-      return;
-    }
-    if (!newPost.trim()) {
-      setError("Post content is required.");
       return;
     }
     setError(null);
@@ -82,46 +79,59 @@ const CommunityPage: React.FC = () => {
     );
   };
 
+  const handleReadMore = (postId: number) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              showAllReplies: !post.showAllReplies, // Toggle untuk menampilkan atau menyembunyikan replies
+            }
+          : post
+      )
+    );
+  };
+
   return (
-    <div className="min-h-screen flex bg-gray-100">
-      {/* Sidebar */}
-      <aside className="fixed w-64 bg-green-600 text-white p-6 h-full lg:block hidden">
-        <h2 className="text-4xl font-bold mb-8 mt-20">Community</h2>
-        <nav className="space-y-4">
-          {[
-            { label: "🏠 Home", page: "Home" },
-            { label: "💬 Discussions", page: "Discussions" },
-            { label: "📄 Posts", page: "Posts" },
-          ].map(({ label, page }) => (
-            <a
-              key={page}
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setActivePage(page);
-              }}
-              className={`block py-2 px-3 rounded ${
-                activePage === page
-                  ? "bg-green-500"
-                  : "hover:bg-green-400 duration-500 ease-in-out"
-              }`}
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
-      </aside>
+    <motion.div
+      className="min-h-screen bg-gray-50 flex flex-col"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }} // Durasi animasi
+    >
+      {/* Header */}
+      <motion.header
+        className=" bg-gradient-to-r from-green-400 via-green-500 bg-green-600 text-white p-4 shadow-md mt-16"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="container mx-auto flex justify-center">
+          <h1 className="text-4xl font-bold">Community Leaf</h1>
+        </div>
+      </motion.header>
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 p-6 space-y-6 mt-20">
+      <motion.main
+        className="flex-1 p-6 space-y-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7 }}
+      >
         {/* Create Post Section */}
-        <div className="bg-white rounded-lg shadow p-6 space-y-4">
-          <h2 className="text-2xl font-bold text-gray-800">Create Post</h2>
+        <motion.section
+          className="bg-green-50 rounded-lg shadow-lg p-6 space-y-4"
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.7 }}
+        >
+          <h2 className="text-4xl text-center font-bold text-gray-800">Create Post</h2>
           <textarea
             value={newPost}
             onChange={(e) => setNewPost(e.target.value)}
             placeholder="Ceritakan Pengalamanmu"
-            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-gray-200 focus:outline-none min-h-[100px]"
+            className="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 min-h-[100px]"
           />
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
@@ -130,7 +140,7 @@ const CommunityPage: React.FC = () => {
               onClick={() => document.getElementById("imageInput")?.click()}
               className="px-4 py-2 bg-green-200 text-gray-800 rounded-lg hover:bg-green-300"
             >
-              📷 Image
+              📷 Add Image
             </button>
             <input
               id="imageInput"
@@ -147,9 +157,7 @@ const CommunityPage: React.FC = () => {
             <button
               onClick={handlePost}
               disabled={loading}
-              className={`px-6 py-2 ${
-                loading ? "bg-gray-400" : "bg-green-500 hover:bg-green-700"
-              } text-white rounded-lg shadow-md transform hover:scale-105 transition-transform duration-200 ml-auto`}
+              className={`px-6 py-2 text-white rounded-lg shadow-md ${loading ? "bg-gray-400" : "bg-green-500 hover:bg-green-700"}`}
             >
               {loading ? "Posting..." : "Post"}
             </button>
@@ -163,20 +171,28 @@ const CommunityPage: React.FC = () => {
               />
               <button
                 onClick={() => setSelectedImage(null)}
-                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-md hover:bg-red-600"
+                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-md"
               >
                 ×
               </button>
             </div>
           )}
-        </div>
+        </motion.section>
 
         {/* Posts Section */}
-        <div className="space-y-6">
+        <motion.section
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7 }}
+        >
           {posts.map((post) => (
-            <div
+            <motion.div
               key={post.id}
-              className="bg-white shadow-lg rounded-lg p-6 space-y-4 transform hover:scale-[1.02] hover:shadow-2xl transition duration-200"
+              className="bg-white shadow-lg rounded-lg p-6 space-y-4 hover:scale-105 transition-transform duration-200"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
               <div className="space-y-2">
                 <div className="flex items-center space-x-3">
@@ -193,14 +209,16 @@ const CommunityPage: React.FC = () => {
                   <img
                     src={post.image}
                     alt="Post"
-                    className="rounded-lg shadow-md max-h-96 w-96 object-cover"
+                    className="rounded-lg shadow-md max-h-96 w-full object-cover"
                   />
                 )}
               </div>
               <button className="text-green-500 hover:underline">
                 💬 Reply
               </button>
-              {post.replies.map((reply) => (
+
+              {/* Display replies */}
+              {post.replies.slice(0, post.showAllReplies ? post.replies.length : 3).map((reply) => (
                 <div
                   key={reply.id}
                   className="ml-8 mt-4 p-4 bg-gray-100 rounded-lg text-gray-800 shadow-sm"
@@ -210,11 +228,29 @@ const CommunityPage: React.FC = () => {
                   <p className="mt-2 font-medium">{reply.content}</p>
                 </div>
               ))}
+              
+              {/* Read More button */}
+              {post.replies.length > 3 && !post.showAllReplies && (
+                <button
+                  onClick={() => handleReadMore(post.id)}
+                  className="mt-2 text-blue-500 hover:underline"
+                >
+                  Read More
+                </button>
+              )}
+              {post.showAllReplies && post.replies.length > 3 && (
+                <button
+                  onClick={() => handleReadMore(post.id)}
+                  className="mt-2 text-blue-500 hover:underline"
+                >
+                  Show Less
+                </button>
+              )}
 
               <div className="ml-8 mt-4 relative">
                 <textarea
                   placeholder="Write your reply..."
-                  className="w-full p-2 border rounded-lg pr-10" // Add padding right for icon space
+                  className="w-full p-2 border rounded-lg pr-10"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -240,32 +276,11 @@ const CommunityPage: React.FC = () => {
                   <PlaneIcon className="h-6 w-6 text-green-500" />
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
-      </main>
-
-      {/* Responsive Sidebar */}
-      <aside className="lg:hidden fixed bottom-0 left-0 w-full bg-green-600 text-white flex justify-around py-4">
-        {[
-          { label: "🏠", page: "Home" },
-          { label: "💬", page: "Discussions" },
-          { label: "📄", page: "Posts" },
-        ].map(({ label, page }) => (
-          <a
-            key={page}
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              setActivePage(page);
-            }}
-            className={`text-center ${activePage === page ? "font-bold" : ""}`}
-          >
-            {label} <br /> {page}
-          </a>
-        ))}
-      </aside>
-    </div>
+        </motion.section>
+      </motion.main>
+    </motion.div>
   );
 };
 
