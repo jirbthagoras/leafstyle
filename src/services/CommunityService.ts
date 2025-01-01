@@ -1,69 +1,75 @@
-// CommunityService.ts
-import { db } from '@/lib/firebase/config'; // Assume you've initialized Firebase
-import {
-    collection,
-    doc,
-    addDoc,
-    getDoc,
-    getDocs,
-    query,
-    where,
-    setDoc,
-    serverTimestamp,
-} from 'firebase/firestore';
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase/config";
 
-export interface Article {
-    id?: string;
-    userId: string;
+export interface Post {
+    id: string;
     content: string;
-    createdAt?: string;
+    image: string | null;
+    timestamp: string;
+    author: string;
+    replies: Reply[];
 }
 
 export interface Reply {
-    id?: string;
-    articleId: string;
-    userId: string;
+    id: string;
     content: string;
-    createdAt?: string;
+    timestamp: string;
+    author: string;
 }
 
-const articlesCollection = collection(db, 'articles');
-const repliesCollection = collection(db, 'replies');
+class CommunityService {
+    currentUser: User | null = null;
 
-export const CommunityService = {
-    async postArticle(article: Omit<Article, 'id' | 'createdAt'>): Promise<string> {
-        const newArticle = { ...article, createdAt: serverTimestamp() };
-        const docRef = await addDoc(articlesCollection, newArticle);
-        return docRef.id;
-    },
+    constructor() {
+        onAuthStateChanged(auth, (user) => {
+            this.currentUser = user;
+        });
+    }
 
-    async replyToArticle(reply: Omit<Reply, 'id' | 'createdAt'>): Promise<string> {
-        const newReply = { ...reply, createdAt: serverTimestamp() };
-        const docRef = await addDoc(repliesCollection, newReply);
-        return docRef.id;
-    },
-
-    async getArticleById(articleId: string): Promise<Article | null> {
-        const docRef = doc(articlesCollection, articleId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            return { id: docSnap.id, ...docSnap.data() } as Article;
+    async fetchPosts(): Promise<Post[]> {
+        const postsQuery = query(collection(db, "posts"), orderBy("timestamp", "desc"));
+        const snapshot = await getDocs(postsQuery);
+        const posts: Post[] = [];
+        for (const docSnap of snapshot.docs) {
+            const data = docSnap.data();
+            const repliesSnapshot = await getDocs(collection(db, `posts/${docSnap.id}/replies`));
+            const replies: Reply[] = repliesSnapshot.docs.map((replyDoc) => ({
+                id: replyDoc.id,
+                ...replyDoc.data(),
+            })) as Reply[];
+            posts.push({
+                id: docSnap.id,
+                content: data.content,
+                image: data.image || null,
+                timestamp: data.timestamp,
+                author: data.author,
+                replies,
+            });
         }
-        return null;
-    },
+        return posts;
+    }
 
-    async getRepliesByArticleId(articleId: string): Promise<Reply[]> {
-        const q = query(repliesCollection, where('articleId', '==', articleId));
-        const querySnapshot = await getDocs(q);
-        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Reply));
-    },
+    async createPost(content: string, image: string | null): Promise<void> {
+        if (!this.currentUser) throw new Error("User not logged in");
+        await addDoc(collection(db, "posts"), {
+            content,
+            image,
+            timestamp: new Date().toISOString(),
+            author: this.currentUser.displayName || "Anonymous",
+        });
+    }
 
-    async getAllArticles(): Promise<Article[]> {
-        const querySnapshot = await getDocs(articlesCollection);
-        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Article));
-    },
-};
+    async addReply(postId: string, replyContent: string): Promise<void> {
+        if (!this.currentUser) throw new Error("User not logged in");
+        const replyRef = collection(db, `posts/${postId}/replies`);
+        await addDoc(replyRef, {
+            content: replyContent,
+            timestamp: new Date().toISOString(),
+            author: this.currentUser.displayName || "Anonymous",
+        });
+    }
+}
 
-// Example of how to use these functions
-// CommunityService.postArticle({ userId: 'user123', content: 'Hello world!' });
-// CommunityService.replyToArticle({ articleId: 'article123', userId: 'user456', content: 'Nice post!' });
+const communityService = new CommunityService();
+export default communityService;
