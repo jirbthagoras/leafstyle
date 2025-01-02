@@ -20,10 +20,15 @@ export interface Reply {
 
 class CommunityService {
     currentUser: User | null = null;
+    currentUserName: string = "Anonymous";
 
     constructor() {
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             this.currentUser = user;
+            if (user) {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                this.currentUserName = userDoc.exists() ? userDoc.data().name : "Anonymous";
+            }
         });
     }
 
@@ -52,21 +57,23 @@ class CommunityService {
 
     async createPost(content: string, image: string | null): Promise<void> {
         if (!this.currentUser) throw new Error("User not logged in");
+
         await addDoc(collection(db, "posts"), {
             content,
             image,
             timestamp: new Date().toISOString(),
-            author: this.currentUser.displayName || "Anonymous",
+            author: this.currentUserName,
         });
     }
 
     async addReply(postId: string, replyContent: string): Promise<void> {
         if (!this.currentUser) throw new Error("User not logged in");
+
         const replyRef = collection(db, `posts/${postId}/replies`);
         await addDoc(replyRef, {
             content: replyContent,
             timestamp: new Date().toISOString(),
-            author: this.currentUser.displayName || "Anonymous",
+            author: this.currentUserName,
         });
     }
 }

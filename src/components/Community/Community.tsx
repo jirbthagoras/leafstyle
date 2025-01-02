@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { PlaneIcon } from "lucide-react"; // Import ikon pesawat
 import { motion } from "framer-motion";
 import communityService, { Post } from "@/services/CommunityService";
+import { uploadImage } from "@/services/UploadImgService";
 
 const CommunityPage: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -40,7 +41,10 @@ const CommunityPage: React.FC = () => {
       let imageUrl = null;
 
       if (selectedImage) {
-        imageUrl = await communityService.uploadImage(selectedImage);
+        imageUrl = await uploadImage(selectedImage, {
+          uploadPreset: 'recycling_app_uploads',
+          folder: 'community_posts'
+        });
       }
 
       await communityService.createPost(newPost, imageUrl);

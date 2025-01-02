@@ -51,7 +51,10 @@ const ImageUpload = () => {
       };
       reader.readAsDataURL(file);
 
-      const imageUrl = await uploadImage(file);
+      const imageUrl = await uploadImage(file, {
+        uploadPreset: 'recycling_app_uploads',
+        folder: 'ai_scans'
+      });
       const analysis = await analyzeImage(imageUrl);
 
       if (!analysis) {
