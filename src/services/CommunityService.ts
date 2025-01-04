@@ -60,7 +60,7 @@ class CommunityService {
         if (!this.currentUser) throw new Error("User not logged in");
 
         try {
-            // Create the post first
+            // Create the post
             const postRef = await addDoc(collection(db, "posts"), {
                 content,
                 image,
@@ -82,7 +82,7 @@ class CommunityService {
                 type: "POST_REWARD"
             });
 
-            // Update user's total points
+            // Update total points
             const userRef = doc(db, "users", this.currentUser.uid);
             const userDoc = await getDoc(userRef);
             

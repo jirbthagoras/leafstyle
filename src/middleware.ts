@@ -1,18 +1,30 @@
-import {NextRequest, NextResponse} from 'next/server';
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { auth } from '@/lib/firebase/config'
 
 export async function middleware(request: NextRequest) {
-    const path = request.nextUrl.pathname;
+  const protectedPaths = ['/marketplace/add']
+  
+  const isProtectedPath = protectedPaths.some(path => 
+    request.nextUrl.pathname.startsWith(path)
+  )
 
-    const {cookies} = request;
+  if (isProtectedPath) {
+    const token = request.cookies.get('user')
 
-    const token = cookies.get("user");
-
-    if(token) {
-
-        if(path === "/login" || path === "/sign-in") {
-            NextResponse.redirect(new URL("/"))
-        }
-
+    if (!token) {
+      const loginUrl = new URL('/auth', request.url)
+      loginUrl.searchParams.set('callbackUrl', request.url)
+      return NextResponse.redirect(loginUrl)
     }
+  }
 
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: [
+    '/marketplace/add',
+
+]
 }
