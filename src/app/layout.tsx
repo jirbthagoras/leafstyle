@@ -1,6 +1,7 @@
 import { Plus_Jakarta_Sans } from "next/font/google";
 import Navbar from "@/components/Global/Navbar";
 import "./globals.css";
+import Script from 'next/script';
 
 const jakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -19,8 +20,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+      </head>
       <body className={`${jakartaSans.className} antialiased`}>
         <Navbar /> {/* Navbar global */}
+        <Script 
+          src="https://app.sandbox.midtrans.com/snap/snap.js"
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          strategy="beforeInteractive"
+        />
         {children}
       </body>
     </html>

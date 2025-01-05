@@ -27,7 +27,7 @@ const Navbar = () => {
 
                     {/* Navbar Desktop */}
                     <div className="hidden md:block">
-                        <div className="flex items-center space-x-6"> {/* Increase space between links */}
+                        <div className="flex items-center space-x-6"> 
                             <button
                                 onClick={() => {router.push("/")}}
                                 className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Beranda</button>
@@ -38,7 +38,9 @@ const Navbar = () => {
                             <button
                                 onClick={() => {router.push("/ai")}}
                                 className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">AI Finity</button>
-                            <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Toko</a>
+                            <button
+                                onClick={() => {router.push("/marketplace")}}
+                                className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Toko</button>
                             <button
                                 onClick={() => {router.push("/community")}}
                                 className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Komunitas</button>
