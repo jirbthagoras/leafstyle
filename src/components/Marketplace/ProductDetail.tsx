@@ -11,7 +11,7 @@ import paymentService from '@/services/PaymentService';
 import { getDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import Modal from '@/components/Marketplace/Modal';
-
+import Image from 'next/image';
 interface ProductDetailProps {
   productId: string;
 }
@@ -28,7 +28,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
     email: '',
     address: ''
   });
-  const [showCustomerForm, setShowCustomerForm] = useState(false);
+  const [showCustomerForm] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -115,13 +115,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
         throw new Error('Product is no longer available');
       }
 
-      // Record initial transaction
+      // Record initial transaction with product details
       const transactionId = await paymentService.recordTransaction({
         productId: product.id,
         buyerId: auth.currentUser!.uid,
         sellerId: product.seller.id,
         amount: product.price,
-        customerDetails
+        customerDetails,
+        productTitle: product.title,
+        productImage: product.images[0],
+        price: product.price
       });
 
       // Create payment token
@@ -143,9 +146,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
             try {
               await Promise.all([
                 marketplaceService.checkout(productId, customerDetails),
-                paymentService.updateTransactionStatus(transactionId, 'completed')
+                paymentService.updateTransactionStatus(transactionId, 'pending')
               ]);
-              alert("Purchase successful!");
+              alert("Payment successful! Waiting for seller confirmation.");
               router.push('/marketplace');
             } catch (error) {
               console.error('Error processing successful payment:', error);
@@ -197,9 +200,22 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
   };
 
   const renderSellerView = () => {
-    if (product.status === 'pending') {
-      return (
-        <div className="space-y-4">
+    const handleDelete = async () => {
+      if (window.confirm('Are you sure you want to delete this product?')) {
+        try {
+          await marketplaceService.deleteProduct(productId);
+          alert('Product deleted successfully');
+          router.push('/marketplace');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          alert(error.message || 'Failed to delete product');
+        }
+      }
+    };
+
+    return (
+      <div className="space-y-4">
+        {product.status === 'pending' ? (
           <div className="bg-yellow-50 p-4 rounded-lg">
             <h3 className="font-semibold text-lg mb-2">Pending Order</h3>
             <div className="space-y-2">
@@ -223,22 +239,18 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
               </button>
             </div>
           </div>
-        </div>
-      );
-    } else if (product.status === 'sold') {
-      return (
-        <div className="bg-green-50 p-4 rounded-lg">
-          <h3 className="font-semibold text-lg mb-2">Order Completed</h3>
-          <div className="space-y-2">
-            <p><span className="font-medium">Sold to:</span> {product.buyer?.name}</p>
-            <p><span className="font-medium">Sale Date:</span> {new Date(product.createdAt).toLocaleDateString()}</p>
-            <p><span className="font-medium">Shipping Address:</span> {product.customerDetails?.address}</p>
+        ) : (
+          <div className="flex justify-end">
+            <button
+              onClick={handleDelete}
+              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+            >
+              Delete Product
+            </button>
           </div>
-        </div>
-      );
-    }
-
-    return null;
+        )}
+      </div>
+    );
   };
 
   const renderCustomerForm = () => (
@@ -325,7 +337,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
             {/* Image Gallery */}
             <div className="space-y-4">
               <div className="relative h-96">
-                <img
+                <Image
                   src={product.images[currentImageIndex]}
                   alt={product.title}
                   className={`w-full h-full object-cover rounded-lg ${
@@ -342,7 +354,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
               </div>
               <div className="flex space-x-2 overflow-x-auto">
                 {product.images.map((image, index) => (
-                  <img
+                  <Image
                     key={index}
                     src={image}
                     alt={`${product.title} ${index + 1}`}

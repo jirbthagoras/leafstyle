@@ -82,7 +82,13 @@ const Marketplace: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-center mb-8">
   <h1 className="text-3xl md:text-4xl font-bold text-green-600 mb-4 md:mb-0">Marketplace</h1>
   {isAuthenticated && (
-    <div className="flex flex-row md:flex-row gap-x-16 md:gap-0 md:space-y-0 md:space-x-4">
+    <div className="flex flex-row md:flex-row gap-x-8 md:gap-0 md:space-y-0 md:space-x-4">
+      <button
+        onClick={() => router.push('/marketplace/history')}
+        className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+      >
+        History
+      </button>
       <button
         onClick={() => router.push('/marketplace/my-products')}
         className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
