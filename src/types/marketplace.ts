@@ -37,4 +37,22 @@ interface ProductFilter {
   condition?: string;
 }
 
-export type { Product, ProductFilter }; 
+interface Transaction {
+  id: string;
+  productId: string;
+  productTitle: string;
+  productImage: string;
+  price: number;
+  buyerId: string;
+  sellerId: string;
+  status: 'pending' | 'completed' | 'failed';
+  createdAt: string;
+  customerDetails: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+  };
+}
+
+export type { Product, ProductFilter, Transaction }; 

@@ -13,7 +13,15 @@ class PaymentService {
     buyerId: string;
     sellerId: string;
     amount: number;
-    customerDetails: any;
+    customerDetails: {
+      name: string;
+      email: string;
+      phone: string;
+      address: string;
+    };
+    productTitle: string;
+    productImage: string;
+    price: number;
   }) {
     try {
       const transactionRef = await addDoc(collection(db, "transactions"), {
