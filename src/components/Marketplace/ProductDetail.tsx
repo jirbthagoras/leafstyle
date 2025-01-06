@@ -340,6 +340,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
                 <Image
                   src={product.images[currentImageIndex]}
                   alt={product.title}
+                  width={800}
+                  height={384}
                   className={`w-full h-full object-cover rounded-lg ${
                     product.status === 'sold' ? 'opacity-50' : ''
                   }`}
@@ -358,6 +360,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
                     key={index}
                     src={image}
                     alt={`${product.title} ${index + 1}`}
+                    width={80}
+                    height={80}
                     className={`w-20 h-20 object-cover rounded cursor-pointer ${
                       currentImageIndex === index ? 'ring-2 ring-green-500' : ''
                     }`}
