@@ -21,6 +21,8 @@ interface RecyclingSuggestion {
 interface AnalysisResult {
   items: string;
   suggestions: RecyclingSuggestion[];
+  pointsAdded: boolean;
+  error?: string;
 }
 
 const ImageUpload = () => {
@@ -55,13 +57,25 @@ const ImageUpload = () => {
         uploadPreset: 'recycling_app_uploads',
         folder: 'ai_scans'
       });
-      const analysis = await analyzeImage(imageUrl);
 
-      if (!analysis) {
-        throw new Error('Tidak ada hasil analisis yang diterima.');
+      try {
+        const analysis = await analyzeImage(imageUrl);
+        if (!analysis) {
+          throw new Error('Tidak ada hasil analisis yang diterima.');
+        }
+        
+        setResult(analysis);
+        
+        // Show warning if points weren't added
+        if (!analysis.pointsAdded) {
+          setError('Batas Scan Harian Tercapai');
+          setErrorDetail('Anda masih bisa melihat saran daur ulang, tetapi tidak mendapatkan poin tambahan hari ini.');
+        }
+      } catch (analysisError) {
+        console.error('Analysis error:', analysisError);
+        setError('Terjadi kesalahan dalam analisis gambar');
+        setErrorDetail('Silakan coba lagi nanti.');
       }
-
-      setResult(analysis);
     } catch (error) {
       console.error('Error in handleImageUpload:', error);
 

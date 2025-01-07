@@ -11,8 +11,8 @@ const AddProduct = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -24,10 +24,18 @@ const AddProduct = () => {
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
-      setPreview(URL.createObjectURL(e.target.files[0]));
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setImages(prev => [...prev, ...newFiles]);
+      
+      const newPreviews = newFiles.map(file => URL.createObjectURL(file));
+      setPreviews(prev => [...prev, ...newPreviews]);
     }
+  };
+
+  const removeImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+    setPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,8 +49,8 @@ const AddProduct = () => {
         throw new Error("Invalid price");
       }
 
-      if (!image) {
-        throw new Error("Image is required");
+      if (images.length === 0) {
+        throw new Error("At least one image is required");
       }
 
       await marketplaceService.createProduct(
@@ -50,7 +58,7 @@ const AddProduct = () => {
           ...formData,
           price,
         },
-        [image]
+        images
       );
 
       setSuccess(true);
@@ -248,22 +256,34 @@ const AddProduct = () => {
             {/* Image Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Product Image
+                Product Images
               </label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
                 className="mt-1 block w-full"
-                required
+                multiple
+                required={images.length === 0}
               />
-              {preview && (
-                <div className="mt-4">
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="w-full h-auto rounded-md shadow-md"
-                  />
+              {previews.length > 0 && (
+                <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {previews.map((preview, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={preview}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-48 object-cover rounded-md shadow-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
