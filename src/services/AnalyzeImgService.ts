@@ -1,4 +1,5 @@
 import { Groq } from 'groq-sdk';
+import pointService from './PointService';
 
 const groq = new Groq({
   apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY,
@@ -8,8 +9,8 @@ const groq = new Groq({
 interface RecyclingSuggestion {
   title: string;
   description: string;
-  value: number; // dalam Rupiah
-  difficulty: number; // 1-100
+  value: number;
+  difficulty: number;
   materials: string[];
   timeRequired: string;
   environmentalBenefit: string;
@@ -19,6 +20,8 @@ interface RecyclingSuggestion {
 interface AnalysisResult {
   items: string;
   suggestions: RecyclingSuggestion[];
+  pointsAdded: boolean;
+  error?: string;
 }
 
 export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> => {
@@ -31,7 +34,7 @@ export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> =>
           content: [
             {
               type: "text",
-              text: "Sebagai ahli daur ulang di Indonesia, tolong identifikasi dan jelaskan semua barang yang dapat didaur ulang dalam gambar ini. Berikan deskripsi dalam Bahasa Indonesia yang mencakup:\n1. Jenis barang\n2. Kondisi barang\n3. Material utama\n4. Perkiraan ukuran\n\nJika tidak ada barang yang dapat didaur ulang, tulis 'TIDAK_ADA_BARANG_DAUR_ULANG'"
+              text: "Sebagai ahli daur ulang di Indonesia, tolong identifikasi dan jelaskan semua barang yang dapat didaur ulang dalam gambar ini. Berikan deskripsi dalam Bahasa Indonesia yang mencakup:\n1. Jenis barang\n2. Kondisi barang\n3. Material utama\n4. Perkiraan ukuran\n\nJika tidak ada barang yang dapat didaur ulang, tulis 'TIDAK_ADA_BARANG_DAUR_ULANG, dan berikan kesimpulan dari gambar tersebut'"
             },
             {
               type: "image_url",
@@ -46,8 +49,6 @@ export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> =>
     });
 
     const itemsList = itemsAnalysis.choices[0]?.message?.content || '';
-    
-    // After items analysis
     console.log('Items analysis result:', itemsList);
 
     // Check if recyclable items were found
@@ -58,13 +59,17 @@ export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> =>
       };
     }
 
-    // Modified suggestions prompt
+    let parsedSuggestions: RecyclingSuggestion[] = [];
+    let pointAnalysis = 0;
+
+    // Get suggestions and points from AI
     const suggestions = await groq.chat.completions.create({
       messages: [
         {
           role: "system",
           content: `Anda adalah ahli daur ulang di Indonesia. Berikan ide kreatif daur ulang dalam format JSON yang valid. Hindari karakter khusus dan gunakan format berikut:
 {
+  "point": 0-100,
   "suggestions": [
     {
       "title": "Nama Proyek",
@@ -89,8 +94,6 @@ export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> =>
       max_tokens: 1500
     });
 
-    // Add JSON string cleanup before parsing
-    let parsedSuggestions: RecyclingSuggestion[] = [];
     try {
       const content = suggestions.choices[0]?.message?.content || '';
       
@@ -118,14 +121,44 @@ export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> =>
       
       const parsed = JSON.parse(cleanContent);
       parsedSuggestions = Array.isArray(parsed.suggestions) ? parsed.suggestions : [];
+      pointAnalysis = parsed.point || 0;
+
+      try {
+        const remainingScans = await pointService.getRemainingDailyScans();
+        let pointsAdded = false;
+        
+        if (remainingScans > 0) {
+          try {
+            await pointService.addPoints(
+              pointAnalysis,
+              `Recycling scan points: ${pointAnalysis}`,
+              "SCAN_RECYCLABLE_ITEM"
+            );
+            pointsAdded = true;
+          } catch (pointError) {
+            console.log('Could not add points:', pointError);
+            // Don't throw, just continue without points
+          }
+        }
+
+        return {
+          items: itemsList,
+          suggestions: parsedSuggestions,
+          pointsAdded
+        };
+      } catch (scanError) {
+        // Still return results but indicate points weren't added
+        return {
+          items: itemsList,
+          suggestions: parsedSuggestions,
+          pointsAdded: false,
+          error: scanError instanceof Error ? scanError.message : 'Unknown error'
+        };
+      }
     } catch (e) {
-      console.error('Failed to parse suggestions:', e);
+      console.error('Failed to parse suggestions or add points:', e);
       parsedSuggestions = [];
     }
-
-    // After suggestions
-    console.log('Raw suggestions response:', suggestions.choices[0]?.message?.content);
-    console.log('Parsed suggestions:', parsedSuggestions);
 
     return {
       items: itemsList,

@@ -38,6 +38,9 @@ export const signUpUser = async (email: string, password: string, name: string, 
       phoneNumber,
       points: 0,
       lastUpdated: serverTimestamp(),
+      dailyScanLimit: 2,
+      dailyScanCount: 0,
+      lastScanDate: null
     });
 
     await saveCookie(userCredential);

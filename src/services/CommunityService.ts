@@ -93,7 +93,6 @@ class CommunityService {
                     lastUpdated: serverTimestamp()
                 });
             }
-
         } catch (error) {
             console.error("Error creating post:", error);
             throw error;
