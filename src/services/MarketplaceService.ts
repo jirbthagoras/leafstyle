@@ -2,6 +2,7 @@ import { collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, del
 import { db, auth } from "@/lib/firebase/config";
 import { Product, ProductFilter } from "@/types/marketplace";
 import { uploadImage } from "./UploadImgService";
+import PointService from "./PointService";
 
 class MarketplaceService {
   async createProduct(productData: Omit<Product, 'id' | 'seller' | 'createdAt' | 'status'>, images: File[]): Promise<string> {
@@ -192,6 +193,7 @@ class MarketplaceService {
       );
       const transactionSnapshot = await getDocs(q);
       const transactionDoc = transactionSnapshot.docs[0];
+      const point = Math.ceil(productData.price * 0.001);
 
       if (action === 'accept') {
         await Promise.all([
@@ -203,7 +205,18 @@ class MarketplaceService {
           updateDoc(doc(db, "transactions", transactionDoc.id), {
             status: 'completed',
             updatedAt: new Date().toISOString()
-          })
+          }),
+          PointService.addPoints(
+            point,
+            `Sold item: ${productData.title}`,
+            'MARKETPLACE_SALE'
+          ),
+          PointService.addPoints(
+            point,
+            `Purchased recycled/reused item: ${productData.title}`,
+            'MARKETPLACE_SALE',
+            productData.buyer?.id
+          )
         ]);
       } else {
         await Promise.all([

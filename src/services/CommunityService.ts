@@ -2,6 +2,7 @@ import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc, getDoc, updateDoc, arrayUnion, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/config";
 import { analyzePost } from "./AnalyzePostService";
+import PointService from "./PointService";
 
 export interface Post {
     id: string;
@@ -72,27 +73,12 @@ class CommunityService {
             // Analyze post content
             const analysis = await analyzePost(content);
 
-            // Create point transaction
-            await addDoc(collection(db, "pointTransactions"), {
-                userId: this.currentUser.uid,
-                postId: postRef.id,
-                points: analysis.points,
-                reason: `Environmental post in category: ${analysis.category}. ${analysis.feedback}`,
-                timestamp: new Date().toISOString(),
-                type: "POST_REWARD"
-            });
-
-            // Update total points
-            const userRef = doc(db, "users", this.currentUser.uid);
-            const userDoc = await getDoc(userRef);
-            
-            if (userDoc.exists()) {
-                const currentPoints = userDoc.data().points || 0;
-                await updateDoc(userRef, {
-                    points: currentPoints + analysis.points,
-                    lastUpdated: serverTimestamp()
-                });
-            }
+            // Use PointService to add points
+            await PointService.addPoints(
+                analysis.points,
+                `Environmental post in category: ${analysis.category}. ${analysis.feedback}`,
+                'POST_REWARD'
+            );
         } catch (error) {
             console.error("Error creating post:", error);
             throw error;
