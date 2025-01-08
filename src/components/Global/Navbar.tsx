@@ -37,7 +37,7 @@ const Navbar = () => {
                                 className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Event</button>
                             <button
                                 onClick={() => {router.push("/ai")}}
-                                className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">AI Finity</button>
+                                className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Scan Sampah</button>
                             <button
                                 onClick={() => {router.push("/marketplace")}}
                                 className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Toko</button>
@@ -76,8 +76,7 @@ const Navbar = () => {
                         Virtual</a>
                     <a href={"/login"}
                         className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Event</a>
-                    <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">AI
-                        Finity</a>
+                    <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Scan Sampah</a>
                     <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Toko</a>
                     <a className="text-green-700 text-lg px-3 py-2 rounded-md font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md">Komunitas</a>
                     <StateButton/>
