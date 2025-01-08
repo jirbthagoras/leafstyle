@@ -41,7 +41,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ data }) => {
   };
 
   return (
-    <div className="max-w-xl px-4 mt-20">
+    <div className="max-w-xl min-h-screen px-4 mt-20">
       <div className="bg-gradient-to-br from-green-100 to-yellow-100 rounded-2xl p-8 shadow-lg">
         {/* Header Section */}
         <div className="flex items-center justify-between mb-8">
