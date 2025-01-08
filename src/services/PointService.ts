@@ -21,11 +21,17 @@ export interface UserPoints {
 }
 
 class PointService {
-  async addPoints(points: number, reason: string, type: PointTransaction['type'] = 'OTHER'): Promise<void> {
-    if (!auth.currentUser) throw new Error("User not authenticated");
+  async addPoints(
+    points: number, 
+    reason: string, 
+    type: PointTransaction['type'] = 'OTHER',
+    targetUserId?: string
+  ): Promise<void> {
+    const userId = targetUserId || auth.currentUser?.uid;
+    if (!userId) throw new Error("User not authenticated");
 
     try {
-      const userRef = doc(db, "users", auth.currentUser.uid);
+      const userRef = doc(db, "users", userId);
       const userDoc = await getDoc(userRef);
       
       if (!userDoc.exists()) throw new Error("User not found");
@@ -33,30 +39,10 @@ class PointService {
       const userData = userDoc.data();
       const currentPoints = userData.points || 0;
       const userName = userData.name || "Anonymous";
-      const scanLimit = userData.dailyScanLimit || 2;
-
-      // Check scan limits if type is SCAN_RECYCLABLE_ITEM
-      if (type === 'SCAN_RECYCLABLE_ITEM') {
-        const today = new Date().toISOString().split('T')[0];
-        
-        if (userData.lastScanDate === today) {
-          if ((userData.dailyScanCount || 0) >= scanLimit) {
-            throw new Error(`Daily scan limit (${scanLimit}) reached. Please try again tomorrow.`);
-          }
-          await updateDoc(userRef, {
-            dailyScanCount: (userData.dailyScanCount || 0) + 1
-          });
-        } else {
-          await updateDoc(userRef, {
-            lastScanDate: today,
-            dailyScanCount: 1
-          });
-        }
-      }
 
       // Create point transaction record
       await addDoc(collection(db, "pointTransactions"), {
-        userId: auth.currentUser.uid,
+        userId,
         userName,
         points,
         reason,
