@@ -139,6 +139,20 @@ class PointService {
       throw error;
     }
   }
+
+  async getUserStreak(userId?: string): Promise<number> {
+    const targetUserId = userId || auth.currentUser?.uid;
+    if (!targetUserId) throw new Error("User ID not provided");
+
+    try {
+      const userDoc = await getDoc(doc(db, "users", targetUserId));
+      if (!userDoc.exists()) throw new Error("User not found");
+      return userDoc.data().streak || 0;
+    } catch (error) {
+      console.error("Error fetching user streak:", error);
+      throw error;
+    }
+  }
 }
 
 const pointService = new PointService();
