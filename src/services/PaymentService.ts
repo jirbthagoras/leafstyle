@@ -3,7 +3,7 @@ import { collection, updateDoc } from "firebase/firestore";
 import midtransClient from "midtrans-client";
 import { db } from "@/lib/firebase/config";
 import { addDoc } from "firebase/firestore";
-
+import { toast } from "react-toastify";
 class PaymentService {
   private readonly MIDTRANS_URL = process.env.NEXT_PUBLIC_MIDTRANS_URL;
   private readonly CLIENT_KEY = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
@@ -33,6 +33,14 @@ class PaymentService {
       return transactionRef.id;
     } catch (error) {
       console.error('Error recording transaction:', error);
+      toast.error("Failed to record transaction", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -46,6 +54,14 @@ class PaymentService {
       });
     } catch (error) {
       console.error('Error updating transaction:', error);
+      toast.error("Failed to update transaction status", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -76,6 +92,14 @@ class PaymentService {
       return await response.json();
     } catch (error) {
       console.error('Error creating payment:', error);
+      toast.error("Failed to create payment", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -99,6 +123,14 @@ class PaymentService {
       };
     } catch (error) {
       console.error('Error validating transaction:', error);
+      toast.error("Failed to validate transaction", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }

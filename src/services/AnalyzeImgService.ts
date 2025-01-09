@@ -1,5 +1,6 @@
 import { Groq } from 'groq-sdk';
 import pointService from './PointService';
+import { toast } from 'react-toastify';
 
 const groq = new Groq({
   apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY,
@@ -96,6 +97,16 @@ export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> =>
 
     try {
       const content = suggestions.choices[0]?.message?.content || '';
+      if (!content) {
+        toast.error('Tidak ada hasil analisis yang valid', {
+          icon: "🤖",
+          style: {
+            background: "linear-gradient(to right, #ef4444, #dc2626)",
+            color: "white",
+          }
+        });
+        return null;
+      }
       
       // Find the JSON object in the content
       const jsonStart = content.indexOf('{');
@@ -156,7 +167,14 @@ export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> =>
         };
       }
     } catch (e) {
-      console.error('Failed to parse suggestions or add points:', e);
+      toast.error('Failed to parse suggestions or add points', {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       parsedSuggestions = [];
     }
 
@@ -165,6 +183,13 @@ export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> =>
       suggestions: parsedSuggestions
     };
   } catch (error) {
+    toast.error('Gagal menganalisis gambar', {
+      icon: "❌",
+      style: {
+        background: "linear-gradient(to right, #ef4444, #dc2626)",
+        color: "white",
+      }
+    });
     throw new Error(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }; 

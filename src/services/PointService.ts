@@ -1,5 +1,6 @@
-import { collection, doc, getDoc, getDocs, query, orderBy, limit, where, addDoc, updateDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, orderBy, limit, where, addDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase/config";
+import { toast } from 'react-toastify';
 
 export interface PointTransaction {
   id: string;
@@ -57,8 +58,24 @@ class PointService {
         points: currentPoints + points,
         lastUpdated: serverTimestamp()
       });
+
+      toast.success(`+${points} poin ditambahkan! 🌟`, {
+        style: {
+          background: "linear-gradient(to right, #22c55e, #16a34a)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
     } catch (error) {
       console.error("Error adding points:", error);
+      toast.error('Gagal menambahkan poin', {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -81,6 +98,13 @@ class PointService {
       return Math.max(0, scanLimit - (userData.dailyScanCount || 0));
     } catch (error) {
       console.error("Error checking remaining scans:", error);
+      toast.error("Failed to check remaining scans. Please try again.", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+        }
+      });
       throw error;
     }
   }
@@ -103,6 +127,13 @@ class PointService {
       })) as PointTransaction[];
     } catch (error) {
       console.error("Error fetching point history:", error);
+      toast.error("Failed to fetch point history. Please try again.", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+        }
+      });
       throw error;
     }
   }
@@ -124,6 +155,13 @@ class PointService {
       }));
     } catch (error) {
       console.error("Error fetching leaderboard:", error);
+      toast.error("Failed to fetch leaderboard. Please try again.", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+        }
+      });
       throw error;
     }
   }
@@ -143,6 +181,13 @@ class PointService {
       return userDoc.data().points || 0;
     } catch (error) {
       console.error("Error fetching user points:", error);
+      toast.error("Failed to fetch user points. Please try again.", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+        }
+      });
       throw error;
     }
   }
@@ -157,6 +202,13 @@ class PointService {
       return userDoc.data().streak || 0;
     } catch (error) {
       console.error("Error fetching user streak:", error);
+      toast.error("Failed to fetch user streak. Please try again.", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+        }
+      });
       throw error;
     }
   }
@@ -197,6 +249,13 @@ class PointService {
       });
     } catch (error) {
       console.error("Error updating streak:", error);
+      toast.error("Failed to update streak. Please try again.", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+        }
+      });
       throw error;
     }
   }

@@ -3,6 +3,7 @@ import { db, auth } from "@/lib/firebase/config";
 import { Product, ProductFilter } from "@/types/marketplace";
 import { uploadImage } from "./UploadImgService";
 import PointService from "./PointService";
+import { toast } from "react-toastify";
 
 class MarketplaceService {
   async createProduct(productData: Omit<Product, 'id' | 'seller' | 'createdAt' | 'status'>, images: File[]): Promise<string> {
@@ -37,6 +38,14 @@ class MarketplaceService {
       return docRef.id;
     } catch (error) {
       console.error("Error creating product:", error);
+      toast.error("Failed to create product", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -73,6 +82,14 @@ class MarketplaceService {
       })) as Product[];
     } catch (error) {
       console.error("Error fetching products:", error);
+      toast.error("Failed to fetch products", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -92,6 +109,14 @@ class MarketplaceService {
       await updateDoc(productRef, { status });
     } catch (error) {
       console.error("Error updating product status:", error);
+      toast.error("Failed to update product status", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -122,6 +147,14 @@ class MarketplaceService {
       await deleteDoc(productRef);
     } catch (error) {
       console.error("Error deleting product:", error);
+      toast.error("Failed to delete product", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -141,6 +174,14 @@ class MarketplaceService {
       } as Product;
     } catch (error) {
       console.error("Error fetching product:", error);
+      toast.error("Failed to fetch product", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -167,6 +208,14 @@ class MarketplaceService {
       });
     } catch (error) {
       console.error("Error during checkout:", error);
+      toast.error("Failed to checkout", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -235,6 +284,14 @@ class MarketplaceService {
       }
     } catch (error) {
       console.error("Error handling order:", error);
+      toast.error("Failed to handle order", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -256,6 +313,14 @@ class MarketplaceService {
       })) as Product[];
     } catch (error) {
       console.error("Error fetching my products:", error);
+      toast.error("Failed to fetch my products", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
       throw error;
     }
   }
@@ -315,6 +380,14 @@ class MarketplaceService {
       })) as Transaction[];
     } catch (error) {
       console.error("Error fetching transaction history:", error);
+      toast.error("Failed to fetch transaction history", {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      }); 
       throw error;
     }
   }
