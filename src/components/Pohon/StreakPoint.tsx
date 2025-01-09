@@ -25,7 +25,7 @@ const StreakPointsCard = ({ streak, points }) => {
       <div className="relative p-1 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-xl" />
         
-        <div className="relative bg-gradient-to-r from-green-200 to-yellow-300 rounded-3xl p-2">
+        <div className="relative bg-gradient-to-r rounded-3xl p-2">
           <div className="flex flex-col items-center gap-8">
             {/* Streak Section */}
             <div

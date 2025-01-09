@@ -212,8 +212,8 @@ const EventPage = () => {
                     exit={{ opacity: 0, scale: 0.8 }}
                     transition={{ duration: 0.3 }}
                 >
-                    <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2">
-                        <h2 className="text-2xl font-bold text-green-600 mb-4">{selectedEvent.title}</h2>
+                    <div className="bg-gradient-to-r from-green-100 to-yellow-50 rounded-lg p-6 w-11/12 md:w-1/2">
+                        <h2 className="text-3xl text-center font-bold text-green-600 mb-4">{selectedEvent.title}</h2>
                         <div className="mb-4">
                             <div className="flex justify-around border-b">
                                 <button
@@ -248,39 +248,96 @@ const EventPage = () => {
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                {activeTab === "deskripsi" && (
-                                    <p className="text-gray-700">{selectedEvent.description}</p>
-                                )}
+{activeTab === "deskripsi" && (
+  <motion.div
+  className="max-w-3xl mx-auto mt-8 mb-6 px-4 bg-gradient-to-r from-green-100 to-yellow-50 
+      rounded-lg shadow-lg border border-gray-200 p-6 text-center font-semibold"
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4, ease: "easeOut" }}
+>
+  <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">
+      {selectedEvent.description}
+  </p>
+  </motion.div>
+)}
                                 {activeTab === "pembicara" && (
-                                    <p className="text-gray-700">{selectedEvent.speaker}</p>
+                                     <motion.div
+                                     className="max-w-3xl mx-auto mt-8 mb-6 px-4 bg-gradient-to-r from-green-100 to-yellow-50 
+                                         rounded-lg shadow-lg border border-gray-200 p-6 text-center font-semibold"
+                                     initial={{ opacity: 0, y: 20 }}
+                                     animate={{ opacity: 1, y: 0 }}
+                                     transition={{ duration: 0.4, ease: "easeOut" }}
+                                 >
+                                     <h2 className="text-gray-700 text-2xl leading-relaxed whitespace-pre-line">
+                                         {selectedEvent.speaker}
+                                     </h2>
+                                     </motion.div>
                                 )}
-                                {activeTab === "jadwal" && (
-                                    <p className="text-gray-700">{selectedEvent.schedule}</p>
-                                )}
-                                {activeTab === "attend" && !userAttendances[selectedEvent.id.toString()] && (
-                                    <div>
-                                        <input
-                                            type="text"
-                                            placeholder="Your Name"
-                                            value={formData.nama}
-                                            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-                                            className="w-full p-2 mb-4 border rounded-md"
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Contact Info"
-                                            value={formData.kontak}
-                                            onChange={(e) => setFormData({ ...formData, kontak: e.target.value })}
-                                            className="w-full p-2 mb-4 border rounded-md"
-                                        />
-                                        <button
-                                            className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-                                            onClick={handleFormSubmit}
-                                        >
-                                            Submit
-                                        </button>
-                                    </div>
-                                )}
+                               {activeTab === "jadwal" && (
+    <motion.div
+        className="max-w-3xl mx-auto mt-8 mb-6 px-4 bg-gradient-to-r from-green-100 to-yellow-50 
+            rounded-lg shadow-lg border border-gray-200 p-6 text-center font-semibold"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+    >
+        <h3 className="text-2xl font-bold text-gray-800 mb-4">Jadwal Acara</h3>
+        <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">
+            {selectedEvent.schedule}
+        </p>
+        <div className="mt-6 text-right">
+        </div>
+    </motion.div>
+)}
+
+{activeTab === "attend" && !userAttendances[selectedEvent.id.toString()] && (
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-8 bg-gradient-to-r from-green-100 to-yellow-50">
+        <div className="space-y-4">
+            {/* Name Input */}
+            <div>
+                <label htmlFor="nama" className="block text-sm font-medium text-gray-700 mb-1">
+                    Nama
+                </label>
+                <input
+                    id="nama"
+                    type="text"
+                    placeholder="Masukkan nama Anda"
+                    value={formData.nama}
+                    onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                />
+            </div>
+
+            {/* Phone Input */}
+            <div>
+                <label htmlFor="kontak" className="block text-sm font-medium text-gray-700 mb-1">
+                    Nomor Telepon
+                </label>
+                <input
+                    id="kontak"
+                    type="tel"
+                    placeholder="Masukkan nomor telepon"
+                    value={formData.kontak}
+                    onChange={(e) => {
+                        // Only allow numbers
+                        const value = e.target.value.replace(/[^0-9]/g, '');
+                        setFormData({ ...formData, kontak: value });
+                    }}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                />
+            </div>
+
+            {/* Submit Button */}
+            <button
+                className="w-full bg-green-500 text-white py-3 px-4 rounded-md hover:bg-blue-600 transition-colors duration-200 font-medium"
+                onClick={handleFormSubmit}
+            >
+                Submit
+            </button>
+        </div>
+    </div>
+)}
                             </motion.div>
                         </div>
                         <div className="flex justify-end gap-4">
