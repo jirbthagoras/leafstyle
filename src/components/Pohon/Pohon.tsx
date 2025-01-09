@@ -6,10 +6,13 @@ import { auth } from "@/lib/firebase/config";
 import Leaderboard from "./LeaderboardPage";
 import StreakPoint from "./StreakPoint";
 import pointService from "@/services/PointService";
+import HistoryModal from "./HistoryModal";
 
 const Pohon = () => {
   const [streak, setStreak] = useState(0);
   const [points, setPoints] = useState(0);
+  const [history, setHistory] = useState<PointTransaction[]>([]);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const leaves = Array.from({ length: 5 }, (_, i) => i);
         
     // Animasi untuk efek angin pada gambar utama
@@ -51,8 +54,10 @@ const Pohon = () => {
         try {
           const userPoints = await pointService.getUserPoints();
           const userStreak = await pointService.getUserStreak();
+          const pointHistory = await pointService.getUserPointHistory();
           setPoints(userPoints);
           setStreak(userStreak);
+          setHistory(pointHistory);
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
@@ -167,6 +172,7 @@ const Pohon = () => {
                 </div>
               </div>
               <button
+                onClick={() => setIsHistoryOpen(true)}
                 className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors shadow-lg"
               >
                 History
@@ -185,6 +191,11 @@ const Pohon = () => {
           <StreakPoint streak={streak} points={points} />
         </motion.div>
       </div>
+      <HistoryModal 
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        history={history}
+      />
     </motion.div>
   );
 };

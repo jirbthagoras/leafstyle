@@ -148,7 +148,6 @@ export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> =>
             pointsAdded = true;
           } catch (pointError) {
             console.log('Could not add points:', pointError);
-            // Don't throw, just continue without points
           }
         }
 
