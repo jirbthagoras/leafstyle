@@ -1,6 +1,6 @@
 import { FirebaseError } from "firebase/app";
 import { auth, db } from "@/lib/firebase/config";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, UserCredential } from "firebase/auth";
 import Cookies from "js-cookie";
 import { signOut } from "@firebase/auth";
@@ -8,8 +8,8 @@ import { signOut } from "@firebase/auth";
 export default async function saveCookie(userCredential: UserCredential) {
   Cookies.set("user", JSON.stringify(await userCredential.user.getIdToken()), {
     expires: 1,
-    sameSite: "none",
-    secure: true,
+    sameSite: 'lax',
+    path: '/',
   });
 }
 
@@ -28,14 +28,13 @@ const getErrorMessage = (errorCode: string) => {
   return errorMessages[errorCode] || errorMessages.default;
 };
 
-export const signUpUser = async (email: string, password: string, name: string, phoneNumber: number) => {
+export const signUpUser = async (email: string, password: string, name: string) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const userRef = doc(db, "users", userCredential.user.uid);
 
     await setDoc(userRef, {
       name,
-      phoneNumber,
       points: 0,
       lastUpdated: serverTimestamp(),
       dailyScanLimit: 2,
@@ -57,9 +56,12 @@ export const signUpUser = async (email: string, password: string, name: string, 
 export const loginUser = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log('Before saving cookie');
     await saveCookie(userCredential);
+    console.log('After saving cookie, cookie value:', Cookies.get('user'));
+    const isAdmin = await checkAndSetAdminStatus(userCredential.user.uid);
     return userCredential.user;
-  } catch (error: unknown) {
+  } catch (error) {
     if (error instanceof FirebaseError) {
       throw new Error(getErrorMessage(error.code));
     }
@@ -69,7 +71,8 @@ export const loginUser = async (email: string, password: string) => {
 
 export const logoutUser = async () => {
   try {
-    Cookies.remove("user");
+    Cookies.remove('user');
+    Cookies.remove('isAdmin');
     await signOut(auth);
   } catch {
     throw new Error("Gagal keluar. Silakan coba lagi nanti.");
@@ -99,5 +102,27 @@ export const signInWithGoogle = async () => {
       throw new Error(getErrorMessage(error.code));
     }
     throw new Error("Terjadi kesalahan yang tidak diketahui.");
+  }
+};
+
+export const checkAndSetAdminStatus = async (uid: string) => {
+  try {
+    const userDoc = await getDoc(doc(db, 'users', uid));
+    const isAdmin = userDoc.data()?.isAdmin === true;
+    console.log('Setting admin status:', isAdmin);
+    
+    if (isAdmin) {
+      Cookies.set('isAdmin', 'true', {
+        expires: 1,
+        sameSite: 'lax',
+        path: '/',
+      });
+      console.log('Admin cookie set:', Cookies.get('isAdmin'));
+    }
+    
+    return isAdmin;
+  } catch (error) {
+    console.error('Error checking admin status:', error);
+    return false;
   }
 };

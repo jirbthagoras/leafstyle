@@ -86,7 +86,7 @@ const AddProduct = () => {
       )}
       <div className="container mx-auto px-4 max-w-2xl">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push('/marketplace')}
           className="flex items-center text-green-600 hover:text-green-700 mb-6"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
