@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Leaderboard from "./Leaderboard";
-
+import pointService from "@/services/PointService";
 
 interface User {
   rank: number;
@@ -11,25 +11,33 @@ interface User {
 }
 
 const LeaderboardPage: React.FC = () => {
-  const initialData: User[] = [
-    { rank: 1, name: "Veronika", points: 2500, streak: 15 },
-    { rank: 2, name: "John", points: 2200, streak: 12 },
-    { rank: 3, name: "Maria", points: 1900, streak: 10 },
-    { rank: 4, name: "David", points: 1600, streak: 8 },
-    { rank: 5, name: "Dav", points: 1500, streak: 7 },
-    { rank: 6, name: "You", points: 1250, streak: 8 },
-  ];
+  const [leaderboardData, setLeaderboardData] = useState<User[]>([]);
 
-  const [leaderboardData, setLeaderboardData] = useState<User[]>(initialData);
-  
+  useEffect(() => {
+    const fetchLeaderboardData = async () => {
+      try {
+        const data = await pointService.getLeaderboard(10); // Get top 10 users
+        
+        // Transform the data to match the User interface
+        const transformedData = data.map((user, index) => ({
+          rank: index + 1,
+          name: user.userName,
+          points: user.totalPoints,
+          streak: 0, 
+        }));
 
+        setLeaderboardData(transformedData);
+      } catch (error) {
+        console.error("Error fetching leaderboard data:", error);
+      }
+    };
 
+    fetchLeaderboardData();
+  }, []);
 
   return (
     <div className="min-h-screen p-8 flex gap-6">
-      <Leaderboard
-        data={leaderboardData}
-      />
+      <Leaderboard data={leaderboardData} />
     </div>
   );
 };

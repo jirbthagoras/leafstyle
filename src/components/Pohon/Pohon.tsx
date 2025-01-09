@@ -1,13 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase/config";
 import Leaderboard from "./LeaderboardPage";
 import StreakPoint from "./StreakPoint";
+import pointService from "@/services/PointService";
 
 const Pohon = () => {
-  const [streak, setStreak] = useState(15);
-  const [points, setPoints] = useState(5);
- const leaves = Array.from({ length: 5 }, (_, i) => i);
+  const [streak, setStreak] = useState(0);
+  const [points, setPoints] = useState(0);
+  const leaves = Array.from({ length: 5 }, (_, i) => i);
         
     // Animasi untuk efek angin pada gambar utama
     const plantAnimation = {
@@ -41,6 +44,24 @@ const Pohon = () => {
         }
       })
     };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userPoints = await pointService.getUserPoints();
+          const userStreak = await pointService.getUserStreak();
+          setPoints(userPoints);
+          setStreak(userStreak);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const getTreeImage = () => {
     if (points < 100) {
       return (
@@ -92,9 +113,9 @@ const Pohon = () => {
   return (
     <motion.div
       className="min-h-screen bg-gradient-to-br from-green-200 to-yellow-50 p-6 overflow-hidden flex flex-col sm:flex-row"
-      initial={{ opacity: 0, y: 50 }} // Awal animasi
-      animate={{ opacity: 1, y: 0 }}  // Akhir animasi
-      transition={{ duration: 0.8, ease: "easeInOut" }} // Durasi dan tipe easing yang benar
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
     >
       <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-3 md:mt-20 ">
         <Leaderboard />
@@ -116,7 +137,6 @@ const Pohon = () => {
                 src="./image/Group 4 (1).png"
                 alt="Virtual Tree"
                 className="w-80 h-72 max-w-xs lg:max-w-sm mx-auto object-contain transform transition-transform group-hover:scale-110 group-hover:shadow-lg cursor-pointer"
-                onClick={() => setPoints(points + 50)}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5, duration: 1, ease: "easeInOut" }} // Memperbaiki easing
@@ -147,7 +167,6 @@ const Pohon = () => {
                 </div>
               </div>
               <button
-                onClick={() => setPoints(points + 50)}
                 className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors shadow-lg"
               >
                 History

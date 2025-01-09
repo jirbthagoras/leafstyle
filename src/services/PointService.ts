@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, query, orderBy, limit, where, addDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, orderBy, limit, where, addDoc, updateDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase/config";
 
 export interface PointTransaction {
@@ -31,6 +31,8 @@ class PointService {
     if (!userId) throw new Error("User not authenticated");
 
     try {
+      await this.updateStreak(userId);
+      
       const userRef = doc(db, "users", userId);
       const userDoc = await getDoc(userRef);
       
@@ -105,12 +107,12 @@ class PointService {
     }
   }
 
-  async getLeaderboard(limit: number = 10): Promise<UserPoints[]> {
+  async getLeaderboard(limitCount: number = 10): Promise<UserPoints[]> {
     try {
       const usersQuery = query(
         collection(db, "users"),
         orderBy("points", "desc"),
-        limit(limit)
+        limit(limitCount)
       );
 
       const snapshot = await getDocs(usersQuery);
@@ -127,12 +129,17 @@ class PointService {
   }
 
   async getUserPoints(userId?: string): Promise<number> {
-    const targetUserId = userId || auth.currentUser?.uid;
-    if (!targetUserId) throw new Error("User ID not provided");
-
     try {
-      const userDoc = await getDoc(doc(db, "users", targetUserId));
-      if (!userDoc.exists()) throw new Error("User not found");
+      const targetUserId = userId || auth.currentUser?.uid;
+      if (!targetUserId) throw new Error("User ID not provided");
+
+      const userRef = doc(db, "users", targetUserId);
+      const userDoc = await getDoc(userRef);
+      
+      if (!userDoc.exists()) {
+        return 0;
+      }
+      
       return userDoc.data().points || 0;
     } catch (error) {
       console.error("Error fetching user points:", error);
@@ -150,6 +157,46 @@ class PointService {
       return userDoc.data().streak || 0;
     } catch (error) {
       console.error("Error fetching user streak:", error);
+      throw error;
+    }
+  }
+
+  async updateStreak(userId?: string): Promise<void> {
+    try {
+      const targetUserId = userId || auth.currentUser?.uid;
+      if (!targetUserId) throw new Error("User ID not provided");
+
+      const userRef = doc(db, "users", targetUserId);
+      const userDoc = await getDoc(userRef);
+      
+      if (!userDoc.exists()) return;
+      
+      const userData = userDoc.data();
+      const lastActivityDate = userData.lastActivityDate?.toDate() || new Date(0);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const lastDate = new Date(lastActivityDate);
+      lastDate.setHours(0, 0, 0, 0);
+      
+      const diffDays = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      let newStreak = userData.streak || 0;
+      
+      if (diffDays === 1) {
+        newStreak += 1;
+      } else if (diffDays > 1) {
+        newStreak = 1;
+      } else if (diffDays === 0) {
+        return;
+      }
+      
+      await updateDoc(userRef, {
+        streak: newStreak,
+        lastActivityDate: serverTimestamp()
+      });
+    } catch (error) {
+      console.error("Error updating streak:", error);
       throw error;
     }
   }
