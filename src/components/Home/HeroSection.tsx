@@ -20,12 +20,48 @@ const HomePage = () => {
             });
         }, 100); // Mengurangi delay untuk scroll lebih cepat
     };
+    // Array untuk multiple daun
+    const leaves = Array.from({ length: 5 }, (_, i) => i);
+        
+    // Animasi untuk efek angin pada gambar utama
+    const plantAnimation = {
+      animate: {
+        rotate: [-1, 1, -1],
+        transition: {
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }
+      }
+    };
+  
+    // Animasi untuk daun yang jatuh
+    const leafAnimation = {
+      initial: { 
+        opacity: 0,
+        top: '-20px',
+        left: '50%'
+      },
+      animate: (i) => ({
+        opacity: [0, 1, 1, 0],
+        top: ['0%', '120%'],
+        left: ['50%', `${50 + (i * 10)}%`],
+        rotate: [0, 360],
+        transition: {
+          duration: 5,
+          delay: i * 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }
+      })
+    };
+        
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-green-400 to-yellow-100">
             {/* Hero Section */}
             <motion.div
-                className="pt-16 pb-12 md:pt-24 md:pb-20"
+                className="pt-16 pb-12 md:pt-40 md:pb-20"
                 initial={{ opacity: 0, y: 50 }} // Initial position: invisible and slightly below
                 animate={{ opacity: 1, y: 0 }} // Animasi saat muncul
                 transition={{ duration: 1, ease: "easeOut" }} // Durasi dan easing animasi
@@ -57,24 +93,36 @@ const HomePage = () => {
 
                         {/* Right Section - Tree SVG */}
                         <div className="flex-1 relative w-full max-w-md md:max-w-lg mx-auto md:mx-0">
-                            <svg className="w-full h-auto" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
-                                {/* Tree Trunk */}
-                                <path d="M180 500 Q200 480 220 500 L220 400 Q200 380 180 400 Z" fill="#8B4513" />
-                                {/* Tree Leaves - Animated */}
-                                <g className="animate-[bounce_2s_ease-in-out_infinite]">
-                                    <circle cx="200" cy="300" r="100" fill="#2F855A" />
-                                    <circle cx="150" cy="250" r="85" fill="#2F855A" />
-                                    <circle cx="250" cy="240" r="80" fill="#2F855A" />
-                                    <circle cx="200" cy="200" r="10" fill="#2F855A" />
-                                </g>
-                                {/* Decorative Elements */}
-                                <g className="animate-[pulse_2s_ease-in-out_infinite]">
-                                    <circle cx="180" cy="280" r="10" fill="#fff" fillOpacity="0.6" />
-                                    <circle cx="220" cy="260" r="5" fill="#fff" fillOpacity="0.6" />
-                                    <circle cx="200" cy="230" r="12" fill="#fff" fillOpacity="0.6" />
-                                </g>
-                            </svg>
-                        </div>
+      {/* Gambar utama dengan animasi hembusan angin */}
+      <motion.div
+        variants={plantAnimation}
+        animate="animate"
+        style={{ transformOrigin: 'bottom' }}
+      >
+        <img 
+          src="./image/Group 4 (1).png" 
+          alt="Plant" 
+          className="h-auto w-96 relative z-10" 
+        />
+      </motion.div>
+
+      {/* Daun-daun yang berjatuhan */}
+      {leaves.map((i) => (
+        <motion.div
+          key={i}
+          className="absolute w-6 h-4 text-green-600"
+          custom={i}
+          variants={leafAnimation}
+          initial="initial"
+          animate="animate"
+          style={{ zIndex: 5 }}
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L8 10L12 14L16 10L12 2Z" />
+          </svg>
+        </motion.div>
+      ))}
+    </div>
                     </div>
                 </div>
             </motion.div>
