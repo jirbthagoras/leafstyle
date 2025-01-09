@@ -267,10 +267,13 @@ const EventPage = () => {
                                             className="w-full p-2 mb-4 border rounded-md"
                                         />
                                         <input
-                                            type="text"
+                                            type="tel"
                                             placeholder="Contact Info"
                                             value={formData.kontak}
-                                            onChange={(e) => setFormData({ ...formData, kontak: e.target.value })}
+                                            onChange={(e) => {
+                                                const value = e.target.value.replace(/\D/g, '');
+                                                setFormData({ ...formData, kontak: value })
+                                              }}
                                             className="w-full p-2 mb-4 border rounded-md"
                                         />
                                         <button

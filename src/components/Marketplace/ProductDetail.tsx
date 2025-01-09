@@ -280,7 +280,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
           type="tel"
           placeholder="Phone Number"
           value={customerDetails.phone}
-          onChange={(e) => setCustomerDetails(prev => ({ ...prev, phone: e.target.value }))}
+          onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
+            setCustomerDetails(prev => ({ ...prev, phone: value }))
+          }}
           className="w-full px-4 py-2 border rounded-lg"
           required
         />
