@@ -14,25 +14,22 @@ const HeroSection = () => {
             id: 1,
             title: "Sepeda Gunung Bekas",
             description: "Sepeda gunung bekas dalam kondisi baik.",
-            image: "/images/mountain-bike.jpg",
+            image: "/image/mountain-bike.jpg",
             price: "Rp 2.500.000",
-            rating: 4.5
         },
         {
             id: 2,
             title: "Lukisan Abstrak",
             description: "Lukisan abstrak modern yang memukau.",
-            image: "/images/abstract-painting.jpg",
+            image: "/image/abstract-painting.jpg",
             price: "Rp 1.800.000",
-            rating: 4.8
         },
         {
             id: 3,
             title: "Kamera DSLR Bekas",
             description: "Kamera DSLR bekas dengan kualitas tinggi.",
-            image: "/images/dslr-camera.jpg",
+            image: "/image/dslr-camera.jpg",
             price: "Rp 3.200.000",
-            rating: 4.6
         },
     ];
 
@@ -109,13 +106,13 @@ const HeroSection = () => {
                         <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-3 md:mb-6 text-center md:text-left">
                             <span className="inline-block">
                                 Jual & Beli{" "}
-                                <motion.span
+                                {/* <motion.span
                                     className="inline-block"
                                     animate={{ rotate: [0, -10, 10, 0] }}
                                     transition={{ duration: 2, repeat: Infinity }}
                                 >
                                     🌟
-                                </motion.span>
+                                </motion.span> */}
                             </span>
                             <br />
                             <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-yellow-400">
@@ -184,10 +181,10 @@ const HeroSection = () => {
                                             alt={card.title}
                                             className="w-full h-full object-cover"
                                         />
-                                        <div className="absolute top-2 right-2 bg-white/90 rounded-full px-2 py-1 text-xs flex items-center gap-1">
+                                        {/* <div className="absolute top-2 right-2 bg-white/90 rounded-full px-2 py-1 text-xs flex items-center gap-1">
                                             <Star className="w-3 h-3 text-yellow-400" />
                                             {card.rating}
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="p-3">
                                         <h3 className="font-semibold text-green-600 mb-1">{card.title}</h3>
@@ -235,7 +232,7 @@ const HeroSection = () => {
                                                 alt={card.title}
                                                 className="w-full h-full object-cover"
                                             />
-                                            <motion.div
+                                            {/* <motion.div
                                                 className="absolute top-2 right-2 bg-white/90 rounded-full px-3 py-1 text-sm flex items-center gap-1"
                                                 initial={{ opacity: 0, scale: 0 }}
                                                 animate={{ opacity: 1, scale: 1 }}
@@ -243,7 +240,7 @@ const HeroSection = () => {
                                             >
                                                 <Star className="w-4 h-4 text-yellow-400" />
                                                 {card.rating}
-                                            </motion.div>
+                                            </motion.div> */}
                                         </motion.div>
                                         <div className="p-4">
                                             <h3 className="font-semibold text-green-600 mb-2">{card.title}</h3>
