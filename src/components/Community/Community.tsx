@@ -104,7 +104,7 @@ const CommunityPage: React.FC = () => {
         </motion.header>
 
         {/* Main Content */}
-        <motion.main className="flex-1 p-6 space-y-6">
+        <motion.main className="flex-1 p-6 space-y-6 bg-gradient-to-br from-green-200 to-yellow-50">
           {/* Create Post Section */}
           <section className="bg-green-50 rounded-lg shadow-lg p-6 space-y-4">
             <h2 className="text-4xl text-center font-bold text-gray-800">Create Post</h2>

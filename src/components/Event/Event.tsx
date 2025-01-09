@@ -212,8 +212,8 @@ const EventPage = () => {
                     exit={{ opacity: 0, scale: 0.8 }}
                     transition={{ duration: 0.3 }}
                 >
-                    <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2">
-                        <h2 className="text-2xl font-bold text-green-600 mb-4">{selectedEvent.title}</h2>
+                    <div className="bg-gradient-to-r from-green-100 to-yellow-50 rounded-lg p-6 w-11/12 md:w-1/2">
+                        <h2 className="text-3xl text-center font-bold text-green-600 mb-4">{selectedEvent.title}</h2>
                         <div className="mb-4">
                             <div className="flex justify-around border-b">
                                 <button
@@ -248,11 +248,31 @@ const EventPage = () => {
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                {activeTab === "deskripsi" && (
-                                    <p className="text-gray-700">{selectedEvent.description}</p>
-                                )}
+{activeTab === "deskripsi" && (
+  <motion.div
+  className="max-w-3xl mx-auto mt-8 mb-6 px-4 bg-gradient-to-r from-green-100 to-yellow-50 
+      rounded-lg shadow-lg border border-gray-200 p-6 text-center font-semibold"
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4, ease: "easeOut" }}
+>
+  <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">
+      {selectedEvent.description}
+  </p>
+  </motion.div>
+)}
                                 {activeTab === "pembicara" && (
-                                    <p className="text-gray-700">{selectedEvent.speaker}</p>
+                                     <motion.div
+                                     className="max-w-3xl mx-auto mt-8 mb-6 px-4 bg-gradient-to-r from-green-100 to-yellow-50 
+                                         rounded-lg shadow-lg border border-gray-200 p-6 text-center font-semibold"
+                                     initial={{ opacity: 0, y: 20 }}
+                                     animate={{ opacity: 1, y: 0 }}
+                                     transition={{ duration: 0.4, ease: "easeOut" }}
+                                 >
+                                     <h2 className="text-gray-700 text-2xl leading-relaxed whitespace-pre-line">
+                                         {selectedEvent.speaker}
+                                     </h2>
+                                     </motion.div>
                                 )}
                                 {activeTab === "jadwal" && (
                                     <p className="text-gray-700">{selectedEvent.schedule}</p>
