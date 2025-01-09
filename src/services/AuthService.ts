@@ -8,8 +8,8 @@ import { signOut } from "@firebase/auth";
 export default async function saveCookie(userCredential: UserCredential) {
   Cookies.set("user", JSON.stringify(await userCredential.user.getIdToken()), {
     expires: 1,
-    sameSite: "none",
-    secure: true,
+    sameSite: 'lax',
+    path: '/',
   });
 }
 
@@ -57,13 +57,10 @@ export const signUpUser = async (email: string, password: string, name: string, 
 export const loginUser = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log('Before saving cookie');
     await saveCookie(userCredential);
+    console.log('After saving cookie, cookie value:', Cookies.get('user'));
     const isAdmin = await checkAndSetAdminStatus(userCredential.user.uid);
-    console.log('Login completed:', {
-      uid: userCredential.user.uid,
-      isAdmin: isAdmin,
-      adminCookie: Cookies.get('isAdmin')
-    });
     return userCredential.user;
   } catch (error) {
     if (error instanceof FirebaseError) {
