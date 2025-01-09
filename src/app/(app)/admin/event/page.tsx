@@ -12,6 +12,7 @@ import EventForm from '@/components/Admin/EventForm'
 import EventCard from '@/components/Admin/EventCard'
 import { addDoc, collection, doc, deleteDoc } from 'firebase/firestore'
 import { getFirestore } from 'firebase/firestore'
+import { toast } from 'react-toastify'
 
 export default function AdminEvents() {
   const router = useRouter()
@@ -41,7 +42,14 @@ export default function AdminEvents() {
       const events = await fetchEvents()
       setEvents(events)
     } catch (error) {
-      console.error('Error loading events:', error)
+      toast.error('Error loading events', {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
     }
   }
 
@@ -53,8 +61,23 @@ export default function AdminEvents() {
         createdAt: new Date().toISOString()
       })
       loadEvents()
+      toast.success('Event created successfully!', {
+        icon: "🎉",
+        style: {
+          background: "linear-gradient(to right, #22c55e, #16a34a)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
     } catch (error) {
-      console.error('Error creating event:', error)
+      toast.error('Error creating event', {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
     }
   }
 
@@ -63,8 +86,23 @@ export default function AdminEvents() {
       const db = getFirestore()
       await deleteDoc(doc(db, 'event', eventId))
       loadEvents()
+      toast.success('Event deleted successfully!', {
+        icon: "🗑️",
+        style: {
+          background: "linear-gradient(to right, #22c55e, #16a34a)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
     } catch (error) {
-      console.error('Error deleting event:', error)
+      toast.error('Error deleting event', {
+        icon: "❌",
+        style: {
+          background: "linear-gradient(to right, #ef4444, #dc2626)",
+          color: "white",
+          borderRadius: "1rem",
+        }
+      });
     }
   }
 

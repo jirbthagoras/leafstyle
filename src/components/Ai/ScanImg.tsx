@@ -6,6 +6,7 @@ import { uploadImage } from '@/services/UploadImgService';
 import { analyzeImage } from '@/services/AnalyzeImgService';
 import { Camera, X, Upload, Clock, Leaf, Shield,} from 'lucide-react';
 import { motion } from 'framer-motion';  // Import motion from framer-motion
+import { toast } from 'react-toastify';
 
 interface RecyclingSuggestion {
   title: string;
@@ -58,10 +59,24 @@ const ImageUpload = () => {
         folder: 'ai_scans'
       });
 
+      const loadingToast = toast.loading('Menganalisis gambar...', {
+        style: {
+          background: "linear-gradient(to right, #3b82f6, #2563eb)",
+          color: "white",
+        }
+      });
+
       try {
         const analysis = await analyzeImage(imageUrl);
         if (!analysis) {
-          throw new Error('Tidak ada hasil analisis yang diterima.');
+          toast.error('Tidak ada hasil analisis yang diterima.', {
+            icon: "❌",
+            style: {
+              background: "linear-gradient(to right, #ef4444, #dc2626)",
+              color: "white",
+            }
+          });
+          return new Error('Tidak ada hasil analisis yang diterima.');
         }
         
         setResult(analysis);
@@ -70,11 +85,35 @@ const ImageUpload = () => {
         if (!analysis.pointsAdded) {
           setError('Batas Scan Harian Tercapai');
           setErrorDetail('Anda masih bisa melihat saran daur ulang, tetapi tidak mendapatkan poin tambahan hari ini.');
+          toast.warning('Batas Scan Harian Tercapai', {
+            icon: "⚠️",
+            style: {
+              background: "linear-gradient(to right, #f59e0b, #d97706)",
+              color: "white",
+            }
+          });
+        } else {
+          toast.success('Scan berhasil! Poin telah ditambahkan.', {
+            icon: "🌟",
+            style: {
+              background: "linear-gradient(to right, #22c55e, #16a34a)",
+              color: "white",
+            }
+          });
         }
       } catch (analysisError) {
-        console.error('Analysis error:', analysisError);
         setError('Terjadi kesalahan dalam analisis gambar');
         setErrorDetail('Silakan coba lagi nanti.');
+
+        toast.error('Terjadi kesalahan dalam analisis gambar', {
+          icon: "❌",
+          style: {
+            background: "linear-gradient(to right, #ef4444, #dc2626)",
+            color: "white",
+          }
+        });
+      } finally {
+        toast.dismiss(loadingToast);
       }
     } catch (error) {
       console.error('Error in handleImageUpload:', error);
@@ -83,9 +122,27 @@ const ImageUpload = () => {
         if (error.message.includes('format')) {
           setError('Format gambar tidak diterima');
           setErrorDetail('Coba unggah gambar dengan format JPG, PNG, atau JPEG.');
+
+          toast.error('Format gambar tidak diterima', {
+            icon: "🖼️",
+            style: {
+              background: "linear-gradient(to right, #ef4444, #dc2626)",
+              color: "white",
+              borderRadius: "1rem",
+            }
+          });
         } else if (error.message.includes('clear')) {
           setError('Gambar terlalu buram atau tidak jelas.');
           setErrorDetail('Coba unggah gambar yang lebih jelas atau lebih terang.');
+
+          toast.error('Gambar terlalu buram atau tidak jelas', {
+            icon: "📸",
+            style: {
+              background: "linear-gradient(to right, #ef4444, #dc2626)",
+              color: "white",
+              borderRadius: "1rem",
+            }
+          });
         } else {
           setError('Terjadi kesalahan dalam proses unggah atau analisis gambar.');
           setErrorDetail('Pastikan gambar yang diunggah jelas dan dalam format yang didukung.');

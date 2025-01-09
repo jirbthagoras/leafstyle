@@ -1,5 +1,6 @@
 import {collection, getDocs} from "firebase/firestore";
 import {db} from "@/lib/firebase/config"; // Assuming you defined Event type in the same file
+import { toast } from "react-toastify";
 
 export type Event = {
     eventType: string;
@@ -24,6 +25,14 @@ export const fetchEvents = async (): Promise<Event[]> => {
         })) as unknown as Event[];
     } catch (error) {
         console.error("Error fetching events: ", error);
+        toast.error("Failed to fetch events", {
+            icon: "❌",
+            style: {
+                background: "linear-gradient(to right, #ef4444, #dc2626)",
+                color: "white",
+                borderRadius: "1rem",
+            }
+        });
         throw error; // You can handle this error in the UI if needed
     }
 };
