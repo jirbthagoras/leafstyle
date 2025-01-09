@@ -275,35 +275,64 @@ const EventPage = () => {
                                      </motion.div>
                                 )}
                                 {activeTab === "jadwal" && (
-                                    <p className="text-gray-700">{selectedEvent.schedule}</p>
+                                    <motion.div
+                                    className="max-w-3xl mx-auto mt-8 mb-6 px-4 bg-gradient-to-r from-green-100 to-yellow-50 
+                                        rounded-lg shadow-lg border border-gray-200 p-6 text-center font-semibold"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.4, ease: "easeOut" }}
+                                >
+                                    <h2 className="text-gray-700 text-2xl leading-relaxed whitespace-pre-line">
+                                        {selectedEvent.schedule}
+                                    </h2>
+                                    </motion.div>
                                 )}
-                                {activeTab === "attend" && !userAttendances[selectedEvent.id.toString()] && (
-                                    <div>
-                                        <input
-                                            type="text"
-                                            placeholder="Your Name"
-                                            value={formData.nama}
-                                            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-                                            className="w-full p-2 mb-4 border rounded-md"
-                                        />
-                                        <input
-                                            type="tel"
-                                            placeholder="Contact Info"
-                                            value={formData.kontak}
-                                            onChange={(e) => {
-                                                const value = e.target.value.replace(/\D/g, '');
-                                                setFormData({ ...formData, kontak: value })
-                                              }}
-                                            className="w-full p-2 mb-4 border rounded-md"
-                                        />
-                                        <button
-                                            className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-                                            onClick={handleFormSubmit}
-                                        >
-                                            Submit
-                                        </button>
-                                    </div>
-                                )}
+                               {/* activeTab === "attend" && !userAttendances[selectedEvent.id.toString()] && ( */}
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-8 bg-gradient-to-r from-green-100 to-yellow-50">
+        <div className="space-y-4">
+            {/* Name Input */}
+            <div>
+                <label htmlFor="nama" className="block text-sm font-medium text-gray-700 mb-1">
+                    Nama
+                </label>
+                <input
+                    id="nama"
+                    type="text"
+                    placeholder="Masukkan nama Anda"
+                    value={formData.nama}
+                    onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                />
+            </div>
+
+            {/* Phone Input */}
+            <div>
+                <label htmlFor="kontak" className="block text-sm font-medium text-gray-700 mb-1">
+                    Nomor Telepon
+                </label>
+                <input
+                    id="kontak"
+                    type="tel"
+                    placeholder="Masukkan nomor telepon"
+                    value={formData.kontak}
+                    onChange={(e) => {
+                        // Only allow numbers
+                        const value = e.target.value.replace(/[^0-9]/g, '');
+                        setFormData({ ...formData, kontak: value });
+                    }}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                />
+            </div>
+
+            {/* Submit Button */}
+            <button
+                className="w-full bg-green-500 text-white py-3 px-4 rounded-md hover:bg-blue-600 transition-colors duration-200 font-medium"
+                onClick={handleFormSubmit}
+            >
+                Submit
+            </button>
+        </div>
+    </div>
                             </motion.div>
                         </div>
                         <div className="flex justify-end gap-4">

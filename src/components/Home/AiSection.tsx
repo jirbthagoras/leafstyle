@@ -94,7 +94,7 @@ const AISection = () => {
                             </motion.div>
                             <h2 className="text-6xl sm:text-8xl font-bold">
                                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-emerald-600">
-                                    AILye
+                                    AI Scanner
                                 </span>
                             </h2>
                         </motion.div>
