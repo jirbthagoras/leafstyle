@@ -12,7 +12,7 @@ interface User {
 
 const LeaderboardPage: React.FC = () => {
   const initialData: User[] = [
-    { rank: 1, name: "Sarah", points: 2500, streak: 15 },
+    { rank: 1, name: "Veronika", points: 2500, streak: 15 },
     { rank: 2, name: "John", points: 2200, streak: 12 },
     { rank: 3, name: "Maria", points: 1900, streak: 10 },
     { rank: 4, name: "David", points: 1600, streak: 8 },
@@ -26,7 +26,7 @@ const LeaderboardPage: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 flex gap-6">
+    <div className="min-h-screen p-8 flex gap-6">
       <Leaderboard
         data={leaderboardData}
       />
