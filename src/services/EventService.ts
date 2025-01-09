@@ -14,7 +14,6 @@ export type Event = {
     image: string;
 };
 
-// Function to fetch events from Firebase Firestore
 export const fetchEvents = async (): Promise<Event[]> => {
     try {
         const eventsCollection = collection(db, "event"); // Replace "events" with your Firestore collection name

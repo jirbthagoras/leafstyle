@@ -28,14 +28,13 @@ const getErrorMessage = (errorCode: string) => {
   return errorMessages[errorCode] || errorMessages.default;
 };
 
-export const signUpUser = async (email: string, password: string, name: string, phoneNumber: number) => {
+export const signUpUser = async (email: string, password: string, name: string) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const userRef = doc(db, "users", userCredential.user.uid);
 
     await setDoc(userRef, {
       name,
-      phoneNumber,
       points: 0,
       lastUpdated: serverTimestamp(),
       dailyScanLimit: 2,

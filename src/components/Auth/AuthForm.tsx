@@ -15,26 +15,19 @@ const AuthForm = ({ mode }: AuthFormProps) => {
     phoneNumber: mode === "signup" ? "" : undefined,
   });
   const [error, setError] = useState<string | null>(null);
-  const [passwordStrength, setPasswordStrength] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     // Handle phoneNumber to only allow numbers
-    if (name === "phoneNumber" && !/^\d*$/.test(value)) {
-      return;
-    }
 
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
 
-    // Check password strength
-    if (name === "password") {
-      setPasswordStrength(getPasswordStrength(value));
-    }
+
   };
 
   const handleGoogle = async () => {
@@ -57,12 +50,11 @@ const AuthForm = ({ mode }: AuthFormProps) => {
     }
 
     try {
-      if (mode === "signup" && formData.name && formData.phoneNumber) {
+      if (mode === "signup" && formData.name) {
         await signUpUser(
           formData.email,
           formData.password,
           formData.name,
-          parseInt(formData.phoneNumber)
         );
       } else {
         await loginUser(formData.email, formData.password);
@@ -73,16 +65,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
     }
   };
 
-  const getPasswordStrength = (password: string) => {
-    const hasNumbers = /\d/.test(password);
-    const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    const hasMixedCase = /[a-z]/.test(password) && /[A-Z]/.test(password);
 
-    if (password.length >= 8 && hasNumbers && hasSpecialChars && hasMixedCase) {
-      return "kuat";
-    }
-    return "lemah";
-  };
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -112,19 +95,6 @@ const AuthForm = ({ mode }: AuthFormProps) => {
             />
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="phoneNumber" className="block text-lg font-medium text-green-700">Nomor Telepon</label>
-            <input
-              type="tel"
-              id="phoneNumber"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              className="w-full px-4 py-2 mt-2 border border-green-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-transform duration-300 transform hover:scale-105"
-              placeholder="Nomor Telepon"
-              required
-            />
-          </div>
         </>
       )}
 
@@ -164,18 +134,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
             {showPassword ? "🔓" : "🔒"}
           </button>
         </div>
-        {formData.password && (
-          <>
-            <p className={`mt-2 text-sm ${passwordStrength === "kuat" ? "text-green-600" : "text-red-600"}`} aria-live="polite">
-              {passwordStrength === "kuat" ? "Password kuat" : "Password lemah"}
-            </p>
-            {formData.password.length > 5 && passwordStrength === "lemah" && (
-              <p className="mt-2 text-sm text-yellow-600">
-                Password masih lemah, yakin ingin melanjutkannya?
-              </p>
-            )}
-          </>
-        )}
+         
       </div>
 
       <button
