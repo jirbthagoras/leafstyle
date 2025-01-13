@@ -36,7 +36,7 @@ const LeaderboardPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen p-8 flex gap-6">
+    <div className=" p-8 flex gap-6">
       <Leaderboard data={leaderboardData} />
     </div>
   );

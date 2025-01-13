@@ -63,7 +63,7 @@ const StreakPointsCard = ({ streak, points }) => {
                 <div className="relative">
                   <div className="absolute inset-0 bg-yellow-500/20 rounded-full blur-md animate-pulse" />
                   <div className="relative p-4 bg-gradient-to-br from-green-500 to-yellow-500 rounded-full shadow-lg group-hover:shadow-yellow-500/50">
-                    <Star className="w-12 h-12 text-white animate-spin-slow" />
+                    <Star className="w-12 h-12 text-white animate-bounce" />
                   </div>
                 </div>
                 <span className="mt-4 text-xl font-bold text-green-600">Total Points</span>
