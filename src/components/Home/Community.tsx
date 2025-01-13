@@ -10,6 +10,7 @@ import { MessageCircle } from "lucide-react";
 import { Users } from "lucide-react";
 import { motion } from "framer-motion"; // Import motion
 import { toast } from "react-toastify";
+// import { useRouter } from "next/router";
 
 export type Event = {
     id: string;
@@ -71,7 +72,7 @@ const CommunitySection = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [userId, setUserId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null); // State for error handling
-
+    
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -83,7 +84,6 @@ const CommunitySection = () => {
 
         return () => unsubscribe();
     }, []);
-
     useEffect(() => {
         const fetchAndSetEvents = async () => {
             setIsLoading(true);

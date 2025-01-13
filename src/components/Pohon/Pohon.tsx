@@ -13,41 +13,11 @@ const Pohon = () => {
   const [points, setPoints] = useState(0);
   const [history, setHistory] = useState<PointTransaction[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const leaves = Array.from({ length: 5 }, (_, i) => i);
         
     // Animasi untuk efek angin pada gambar utama
-    const plantAnimation = {
-      animate: {
-        rotate: [-1, 1, -1],
-        transition: {
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }
-      }
-    };
   
     // Animasi untuk daun yang jatuh
-    const leafAnimation = {
-      initial: { 
-        opacity: 0,
-        top: '-20px',
-        left: '50%'
-      },
-      animate: (i) => ({
-        opacity: [0, 1, 1, 0],
-        top: ['0%', '120%'],
-        left: ['50%', `${50 + (i * 10)}%`],
-        rotate: [0, 360],
-        transition: {
-          duration: 5,
-          delay: i * 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }
-      })
-    };
-
+   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -67,41 +37,7 @@ const Pohon = () => {
     return () => unsubscribe();
   }, []);
 
-  const getTreeImage = () => {
-    if (points < 100) {
-      return (
-        <motion.img
-          src="./image/Group 4 (1).png"
-          alt=""
-          className="w-80 h-80 max-w-xs lg:max-w-sm mx-auto object-contain"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 1, ease: "easeInOut" }} // Memperbaiki easing
-        />
-      );
-    }
-    if (points < 300) {
-      return (
-        <motion.svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="150"
-          height="150"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 1, ease: "easeInOut" }} // Memperbaiki easing
-        >
-          <rect x="70" y="90" width="10" height="30" fill="#8B4513" />
-          <circle cx="75" cy="70" r="30" fill="#228B22" />
-        </motion.svg>
-      );
-    }
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
-        <rect x="90" y="120" width="20" height="50" fill="#8B4513" />
-        <circle cx="100" cy="90" r="50" fill="#228B22" />
-      </svg>
-    );
-  };
+ 
 
   const getProgress = () => {
     if (points < 100) return points;
@@ -122,12 +58,12 @@ const Pohon = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
     >
-      <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-3 md:mt-20 ">
+      <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-3 ">
         <Leaderboard />
 
         {/* Pohon */}
         <motion.div
-          className="relative h-fit max-w-md mx-auto rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-all bg-gradient-to-t from-green-50 via-gray-50 to-green-50 md:mt-20 md:max-w-lg lg:max-w-xl"
+          className="relative h-fit max-w-md mx-auto rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-all bg-gradient-to-t from-green-50 via-gray-50 to-green-50 md:mt-20 md:max-w-lg lg:max-w-xl mb-6"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.3, ease: "easeInOut" }} // Memperbaiki easing

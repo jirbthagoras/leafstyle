@@ -30,7 +30,7 @@ const StreakPointsCard = ({ streak, points }) => {
             {/* Streak Section */}
             <div
               className="relative w-full group"
-              onMouseEnter={() => setActiveSection('streak')}
+              // onMouseEnter={() => setActiveSection('streak')}
               onMouseLeave={() => setActiveSection(null)}
             >
               <div className="flex flex-col items-center p-6 rounded-2xl bg-gradient-to-br from-green-100 to-yellow-100 transform transition-all duration-500 group-hover:scale-105">
@@ -56,14 +56,14 @@ const StreakPointsCard = ({ streak, points }) => {
             {/* Points Section */}
             <div
               className="relative w-full group"
-              onMouseEnter={() => setActiveSection('points')}
+              // onMouseEnter={() => setActiveSection('points')}
               onMouseLeave={() => setActiveSection(null)}
             >
               <div className="flex flex-col items-center p-6 rounded-2xl bg-gradient-to-br from-green-100 to-yellow-100 transform transition-all duration-500 group-hover:scale-105">
                 <div className="relative">
                   <div className="absolute inset-0 bg-yellow-500/20 rounded-full blur-md animate-pulse" />
                   <div className="relative p-4 bg-gradient-to-br from-green-500 to-yellow-500 rounded-full shadow-lg group-hover:shadow-yellow-500/50">
-                    <Star className="w-12 h-12 text-white animate-spin-slow" />
+                    <Star className="w-12 h-12 text-white animate-bounce" />
                   </div>
                 </div>
                 <span className="mt-4 text-xl font-bold text-green-600">Total Points</span>

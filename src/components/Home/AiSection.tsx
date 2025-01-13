@@ -2,8 +2,14 @@
 import React from "react";
 import { Camera, Recycle, Trash, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 const AISection = () => {
+      const router = useRouter();
+    
+      const ClickAi = () => {
+        router.push('/ai'); // Navigasi ke halaman '/mulai'
+      };
     const steps = [
         {
             icon: <Camera className="w-6 h-6" />,
@@ -115,6 +121,7 @@ const AISection = () => {
                             className="group relative overflow-hidden bg-green-600 text-white px-8 py-4 rounded-full font-semibold flex items-center gap-2"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
+                            onClick={ClickAi}
                         >
                             <span className="relative z-10 flex items-center gap-2">
                                 Mulai Scanning
