@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion"; // Import motion dari Framer Motion
-import Navbar from "@/components/Global/Navbar";
-
+import { useRouter } from "next/navigation";
 const HomePage = () => {
   // State untuk mengontrol tampilan card tata cara dan tombol
   const [showGuide, setShowGuide] = useState(false);
@@ -35,6 +34,13 @@ const HomePage = () => {
     },
   };
 
+  const router = useRouter();
+
+  const ClickPohon = () => {
+    router.push('/pohon'); // Navigasi ke halaman '/mulai'
+  };
+
+ 
   // Animasi untuk daun yang jatuh
   const leafAnimation = {
     initial: {
@@ -42,6 +48,7 @@ const HomePage = () => {
       top: "-20px",
       left: "50%",
     },
+    
     animate: (i) => ({
       opacity: [0, 1, 1, 0],
       top: ["0%", "120%"],
@@ -54,6 +61,7 @@ const HomePage = () => {
         ease: "easeInOut",
       },
     }),
+    
   };
 
   return (
@@ -81,7 +89,7 @@ const HomePage = () => {
                 dalam perjalanan menuju keberlanjutan!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <button className="bg-green-600 text-white px-6 sm:px-8 py-3 text-sm sm:text-lg rounded-lg font-semibold hover:bg-green-700 hover:scale-105 transform transition duration-300">
+                <button className="bg-green-600 text-white px-6 sm:px-8 py-3 text-sm sm:text-lg rounded-lg font-semibold hover:bg-green-700 hover:scale-105 transform transition duration-300" onClick={ClickPohon}>
                   Mulai Sekarang
                 </button>
                 <button
@@ -104,7 +112,7 @@ const HomePage = () => {
                 <img
                   src="./image/Group 4 (1).png"
                   alt="Plant"
-                  className="md:h-auto md:w-96 relative z-10"
+                  className="h-3/4 md:h-auto md:w-96 flex justify-center items-center relative z-10 mt-8 md:mt-0"
                 />
               </motion.div>
 
@@ -148,9 +156,6 @@ const HomePage = () => {
           <ol className="list-decimal pl-6 space-y-4 text-gray-600">
             <li className="text-lg">Daftar dan buat akun untuk memulai.</li>
             <li className="text-lg">
-              Pilih jenis pohon yang ingin Anda tanam.
-            </li>
-            <li className="text-lg">
               Ikuti petunjuk untuk merawat pohon Anda.
             </li>
             <li className="text-lg">
@@ -160,10 +165,7 @@ const HomePage = () => {
           <div className="flex justify-center mt-6">
             <button
               className="bg-green-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition duration-300"
-              onClick={() => {
-                setShowGuide(false); // Tutup panduan
-                setGuideStep(false); // Reset efek durasi
-              }}
+              onClick={ ClickPohon}
             >
               Ayo Tanam Pohon Virtual
             </button>

@@ -1,14 +1,17 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {  ArrowRight, Star } from "lucide-react";
-
+import {  ArrowRight, } from "lucide-react";
+import { useRouter } from "next/navigation";
 const HeroSection = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [isHovering, setIsHovering] = useState(false);
-
+          const router = useRouter();
+        
+          const ClickJB = () => {
+            router.push('/toko'); // Navigasi ke halaman '/mulai'
+          };
     const cards = [
         {
             id: 1,
@@ -39,11 +42,12 @@ const HeroSection = () => {
         }, 5000);
         return () => clearInterval(interval);
     }, []);
-
-    const handleMouseMove = (event) => {
+    
+    const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const { clientX, clientY } = event;
         setMousePosition({ x: clientX, y: clientY });
-    };
+      };
+    
 
     return (
         <section 
@@ -106,13 +110,13 @@ const HeroSection = () => {
                         <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-3 md:mb-6 text-center md:text-left">
                             <span className="inline-block">
                                 Jual & Beli{" "}
-                                {/* <motion.span
+                                <motion.span
                                     className="inline-block"
                                     animate={{ rotate: [0, -10, 10, 0] }}
                                     transition={{ duration: 2, repeat: Infinity }}
                                 >
                                     🌟
-                                </motion.span> */}
+                                </motion.span>
                             </span>
                             <br />
                             <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-yellow-400">
@@ -135,6 +139,7 @@ const HeroSection = () => {
                                 className="group relative overflow-hidden bg-green-500 text-white px-8 py-4 rounded-lg font-medium text-lg"
                                 onMouseEnter={() => setIsHovering(true)}
                                 onMouseLeave={() => setIsHovering(false)}
+                                onClick={ClickJB}
                             >
                                 <motion.span
                                     className="absolute inset-0 bg-yellow-400"
@@ -181,10 +186,6 @@ const HeroSection = () => {
                                             alt={card.title}
                                             className="w-full h-full object-cover"
                                         />
-                                        {/* <div className="absolute top-2 right-2 bg-white/90 rounded-full px-2 py-1 text-xs flex items-center gap-1">
-                                            <Star className="w-3 h-3 text-yellow-400" />
-                                            {card.rating}
-                                        </div> */}
                                     </div>
                                     <div className="p-3">
                                         <h3 className="font-semibold text-green-600 mb-1">{card.title}</h3>

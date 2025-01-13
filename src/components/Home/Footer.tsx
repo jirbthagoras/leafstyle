@@ -90,7 +90,7 @@ const Footer = () => {
                             </li>
                             <li className="flex items-center space-x-3">
                                 <MapPin className="w-5 h-5 text-green-400" />
-                                <span className="text-gray-300">Jakarta, Indonesia</span>
+                                <span className="text-gray-300">Semarang, Indonesia</span>
                             </li>
                         </ul>
                     </div>
@@ -123,7 +123,7 @@ const Footer = () => {
                 {/* Bottom Bar */}
                 <div className="border-t border-green-700 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                     <p className="text-gray-300 flex items-center">
-                        © 2024 SecondHand. Made with <Heart className="w-4 h-4 text-red-400 mx-1" /> in Indonesia
+                        2025, Made with <Heart className="w-4 h-4 text-red-400 mx-1" /> in Love
                     </p>
                     <button
                         onClick={scrollToTop}

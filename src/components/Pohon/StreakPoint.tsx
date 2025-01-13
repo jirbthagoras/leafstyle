@@ -30,7 +30,7 @@ const StreakPointsCard = ({ streak, points }) => {
             {/* Streak Section */}
             <div
               className="relative w-full group"
-              onMouseEnter={() => setActiveSection('streak')}
+              // onMouseEnter={() => setActiveSection('streak')}
               onMouseLeave={() => setActiveSection(null)}
             >
               <div className="flex flex-col items-center p-6 rounded-2xl bg-gradient-to-br from-green-100 to-yellow-100 transform transition-all duration-500 group-hover:scale-105">
@@ -56,7 +56,7 @@ const StreakPointsCard = ({ streak, points }) => {
             {/* Points Section */}
             <div
               className="relative w-full group"
-              onMouseEnter={() => setActiveSection('points')}
+              // onMouseEnter={() => setActiveSection('points')}
               onMouseLeave={() => setActiveSection(null)}
             >
               <div className="flex flex-col items-center p-6 rounded-2xl bg-gradient-to-br from-green-100 to-yellow-100 transform transition-all duration-500 group-hover:scale-105">
