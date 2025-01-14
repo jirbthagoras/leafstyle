@@ -60,33 +60,45 @@ const Pohon = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
     >
-      {/* Guest Warning Banner */}
-      {isAuthenticated === false && (
-        <div className="fixed top-16 left-0 right-0 bg-yellow-50 border-b border-yellow-200 p-2 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <p className="ml-3 text-sm text-yellow-700">
-                  Login untuk mengakses fitur lengkap dan mengumpulkan poin
-                </p>
-              </div>
-              <button
-                onClick={handleLoginClick}
-                className="ml-4 px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-md hover:bg-yellow-200 transition-colors duration-200"
-              >
-                Login
-              </button>
-            </div>
+{/* Guest Warning Banner */}
+{isAuthenticated === false && (
+  <div className="fixed top-16 left-0 right-0 bg-gradient-to-r from-yellow-100 via-yellow-50 to-yellow-100 border-b border-yellow-200 shadow-md p-3 z-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <div className="flex-shrink-0 animate-bounce">
+            <svg
+              className="h-6 w-6 text-yellow-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
+              />
+            </svg>
           </div>
+          <p className="ml-4 text-sm font-medium text-yellow-800">
+            Login untuk mengakses fitur lengkap dan mengumpulkan poin!
+          </p>
         </div>
-      )}
+        <button
+          onClick={handleLoginClick}
+          className="ml-4 px-4 py-2 bg-gradient-to-r from-yellow-300 to-yellow-400 text-yellow-900 text-sm font-semibold rounded-lg shadow-md hover:from-yellow-400 hover:to-yellow-500 hover:shadow-lg transition-all duration-500"
+        >
+          Login
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
-      <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-3 ">
+
+      <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-3 mt-16 ">
         <Leaderboard />
 
         {/* Pohon */}
