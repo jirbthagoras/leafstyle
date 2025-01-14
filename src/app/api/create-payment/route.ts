@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import midtransClient from 'midtrans-client';
 import { toast } from 'react-toastify';
+import { toastError } from '@/utils/toastConfig';
 
 export async function POST(request: Request) {
   try {
@@ -44,14 +45,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ token: transaction.token });
   } catch (error: any) {
     console.error('Payment creation error:', error);
-    toast.error('Failed to create payment', {
-      icon: "❌",
-      style: {
-        background: "linear-gradient(to right, #ef4444, #dc2626)",
-        color: "white",
-        borderRadius: "1rem",
-      }
-    });
+    toastError('Failed to create payment')
     return NextResponse.json(
       { error: error.message || 'Failed to create payment' },
       { status: 500 }

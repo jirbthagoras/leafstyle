@@ -4,6 +4,7 @@ import { auth, db } from "@/lib/firebase/config";
 import { analyzePost } from "./AnalyzePostService";
 import PointService from "./PointService";
 import { toast } from "react-toastify";
+import { toastError } from "@/utils/toastConfig";
 
 export interface Post {
     id: string;
@@ -145,14 +146,7 @@ class CommunityService {
             );
         } catch (error) {
             console.error("Error creating post:", error);
-            toast.error("Failed to create post", {
-                icon: "❌",
-                style: {
-                    background: "linear-gradient(to right, #ef4444, #dc2626)",
-                    color: "white",
-                    borderRadius: "1rem",
-                }
-            });
+            toastError("Failed to create post")
             throw error;
         }
     }

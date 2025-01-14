@@ -1,6 +1,7 @@
-import { collection, doc, getDoc, getDocs, query, orderBy, limit, where, addDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, orderBy, limit, where, addDoc, updateDoc, serverTimestamp, runTransaction } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase/config";
-import { toast } from 'react-toastify';
+import { toastSuccess, toastWarning } from "@/utils/toastConfig";
+import { toastError } from "@/utils/toastConfig";
 
 export interface PointTransaction {
   id: string;
@@ -13,6 +14,7 @@ export interface PointTransaction {
 }
 
 export interface UserPoints {
+  streak: number;
   userId: string;
   userName: string;
   totalPoints: number;
@@ -22,6 +24,8 @@ export interface UserPoints {
 }
 
 class PointService {
+  private readonly STREAK_RESET_HOUR = 0; // Midnight UTC
+  
   async addPoints(
     points: number, 
     reason: string, 
@@ -59,23 +63,10 @@ class PointService {
         lastUpdated: serverTimestamp()
       });
 
-      toast.success(`+${points} poin ditambahkan! 🌟`, {
-        style: {
-          background: "linear-gradient(to right, #22c55e, #16a34a)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      });
+      toastSuccess(`+${points} poin ditambahkan! 🌟`)
     } catch (error) {
       console.error("Error adding points:", error);
-      toast.error('Gagal menambahkan poin', {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      });
+      toastError('Gagal menambahkan poin')
       throw error;
     }
   }
@@ -98,13 +89,7 @@ class PointService {
       return Math.max(0, scanLimit - (userData.dailyScanCount || 0));
     } catch (error) {
       console.error("Error checking remaining scans:", error);
-      toast.error("Failed to check remaining scans. Please try again.", {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-        }
-      });
+      toastError("Failed to check remaining scans. Please try again.")
       throw error;
     }
   }
@@ -127,13 +112,7 @@ class PointService {
       })) as PointTransaction[];
     } catch (error) {
       console.error("Error fetching point history:", error);
-      toast.error("Failed to fetch point history. Please try again.", {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-        }
-      });
+      toastError("Failed to fetch point history. Please try again.")
       throw error;
     }
   }
@@ -151,17 +130,12 @@ class PointService {
         userId: doc.id,
         userName: doc.data().name || "Anonymous",
         totalPoints: doc.data().points || 0,
+        streak: doc.data().streak || 0,
         lastUpdated: doc.data().lastUpdated?.toDate?.().toISOString() || new Date().toISOString()
       }));
     } catch (error) {
       console.error("Error fetching leaderboard:", error);
-      toast.error("Failed to fetch leaderboard. Please try again.", {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-        }
-      });
+      toastError("Failed to fetch leaderboard")
       throw error;
     }
   }
@@ -181,13 +155,7 @@ class PointService {
       return userDoc.data().points || 0;
     } catch (error) {
       console.error("Error fetching user points:", error);
-      toast.error("Failed to fetch user points. Please try again.", {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-        }
-      });
+      toastError("Failed to fetch user points. Please try again.")
       throw error;
     }
   }
@@ -202,13 +170,7 @@ class PointService {
       return userDoc.data().streak || 0;
     } catch (error) {
       console.error("Error fetching user streak:", error);
-      toast.error("Failed to fetch user streak. Please try again.", {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-        }
-      });
+      toastError("Failed to fetch user streak. Please try again.")
       throw error;
     }
   }
@@ -219,44 +181,127 @@ class PointService {
       if (!targetUserId) throw new Error("User ID not provided");
 
       const userRef = doc(db, "users", targetUserId);
-      const userDoc = await getDoc(userRef);
       
-      if (!userDoc.exists()) return;
-      
-      const userData = userDoc.data();
-      const lastActivityDate = userData.lastActivityDate?.toDate() || new Date(0);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      const lastDate = new Date(lastActivityDate);
-      lastDate.setHours(0, 0, 0, 0);
-      
-      const diffDays = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
-      
-      let newStreak = userData.streak || 0;
-      
-      if (diffDays === 1) {
-        newStreak += 1;
-      } else if (diffDays > 1) {
-        newStreak = 1;
-      } else if (diffDays === 0) {
-        return;
-      }
-      
-      await updateDoc(userRef, {
-        streak: newStreak,
-        lastActivityDate: serverTimestamp()
+      await runTransaction(db, async (transaction) => {
+        const userDoc = await transaction.get(userRef);
+        if (!userDoc.exists()) return;
+        
+        const userData = userDoc.data();
+        const now = new Date();
+        
+        // Get last activity date and normalize to local midnight
+        const lastActivity = userData.lastActivityDate?.toDate() || new Date(0);
+        const lastMidnight = new Date(lastActivity);
+        lastMidnight.setHours(this.STREAK_RESET_HOUR, 0, 0, 0);
+        
+        // Get current date normalized to local midnight
+        const todayMidnight = new Date(now);
+        todayMidnight.setHours(this.STREAK_RESET_HOUR, 0, 0, 0);
+        
+        // Calculate days between last activity and now
+        const diffDays = Math.floor(
+          (todayMidnight.getTime() - lastMidnight.getTime()) / 
+          (1000 * 60 * 60 * 24)
+        );
+
+        let newStreak = userData.streak || 0;
+        let streakStatus: 'maintained' | 'increased' | 'broken' = 'maintained';
+        
+        if (diffDays === 1) {
+          // Perfect streak - activity on consecutive days
+          newStreak += 1;
+          streakStatus = 'increased';
+        } else if (diffDays === 2) {
+          // Missed exactly one day - streak breaks
+          newStreak = 0;
+          streakStatus = 'broken';
+          
+          toastWarning("Streak broken! You missed yesterday")
+        } else if (diffDays > 2) {
+          // More than one day missed - already broken, start new streak
+          newStreak = 1;
+          streakStatus = 'maintained';
+        } else if (diffDays === 0) {  
+          // Same day activity - no streak update needed
+          return;
+        }
+
+        // Update user document
+        transaction.update(userRef, {
+          streak: newStreak,
+          lastActivityDate: serverTimestamp(),
+          highestStreak: Math.max(newStreak, userData.highestStreak || 0),
+          lastStreakUpdate: {
+            date: serverTimestamp(),
+            status: streakStatus
+          }
+        });
+
+        // Log streak change
+        const streakLogRef = collection(db, "streakLogs");
+        transaction.set(doc(streakLogRef), {
+          userId: targetUserId,
+          oldStreak: userData.streak || 0,
+          newStreak,
+          status: streakStatus,
+          timestamp: serverTimestamp(),
+          diffDays
+        });
       });
+
     } catch (error) {
       console.error("Error updating streak:", error);
-      toast.error("Failed to update streak. Please try again.", {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-        }
-      });
       throw error;
+    }
+  }
+
+  async checkStreakStatus(userId?: string): Promise<{
+    isActive: boolean;
+    daysUntilBreak: number;
+    lastUpdate: Date;
+  } | null> {
+    try {
+      const targetUserId = userId || auth.currentUser?.uid;
+      if (!targetUserId) {
+        return null; // Return null instead of throwing error
+      }
+
+      const userDoc = await getDoc(doc(db, "users", targetUserId));
+      if (!userDoc.exists()) {
+        return null;
+      }
+
+      const userData = userDoc.data();
+      const lastActivity = userData.lastActivityDate?.toDate();
+      
+      if (!lastActivity) {
+        return {
+          isActive: false,
+          daysUntilBreak: 0,
+          lastUpdate: new Date()
+        };
+      }
+
+      const now = new Date();
+      const lastMidnight = new Date(lastActivity);
+      lastMidnight.setHours(this.STREAK_RESET_HOUR, 0, 0, 0);
+      
+      const todayMidnight = new Date(now);
+      todayMidnight.setHours(this.STREAK_RESET_HOUR, 0, 0, 0);
+      
+      const diffHours = Math.floor((now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60));
+      const diffDays = Math.floor((todayMidnight.getTime() - lastMidnight.getTime()) / (1000 * 60 * 60 * 24));
+      
+      const hoursUntilBreak = 48 - diffHours;
+      
+      return {
+        isActive: diffDays <= 1,
+        daysUntilBreak: Math.ceil(hoursUntilBreak / 24),
+        lastUpdate: lastActivity
+      };
+    } catch (error) {
+      console.error("Error checking streak status:", error);
+      return null;
     }
   }
 }

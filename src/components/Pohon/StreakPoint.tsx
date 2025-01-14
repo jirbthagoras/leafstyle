@@ -1,11 +1,36 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Flame, Star, Sparkles } from "lucide-react";
+import pointService from "../../services/PointService";
 
-const StreakPointsCard = ({ streak, points }) => {
+const StreakPointsCard = ({ streak, points }: { streak: number; points: number }) => {
   const [activeSection, setActiveSection] = useState(null);
+  const [streakStatus, setStreakStatus] = useState<{
+    isActive: boolean;
+    daysUntilBreak: number;
+    lastUpdate: Date;
+  } | null>(null);
+  
+  useEffect(() => {
+    const checkStreak = async () => {
+      try {
+        const status = await pointService.checkStreakStatus();
+        if (status) {
+          setStreakStatus(status);
+        }
+      } catch (error) {
+        console.error("Error checking streak status:", error);
+      }
+    };
 
-  const generateSparkles = (count) => {
+    if (streak > 0) {
+      checkStreak();
+      const interval = setInterval(checkStreak, 1000 * 60 * 60);
+      return () => clearInterval(interval);
+    }
+  }, [streak]);
+
+  const generateSparkles = (count: number) => {
     return Array.from({ length: count }).map((_, i) => (
       <div
         key={i}
@@ -48,7 +73,7 @@ const StreakPointsCard = ({ streak, points }) => {
                   <Sparkles className="absolute -right-8 top-0 w-6 h-6 text-green-400 animate-spin" />
                 </div>
                 <div className="mt-4 px-4 py-1 bg-green-500 rounded-full">
-                  <p className="text-sm text-black font-semibold">🔥 Keep the streak alive!</p>
+                  <p className="text-sm text-black font-semibold">🔥 Keep the streak alive!</p> 
                 </div>
               </div>
             </div>

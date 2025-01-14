@@ -16,14 +16,13 @@ const LeaderboardPage: React.FC = () => {
   useEffect(() => {
     const fetchLeaderboardData = async () => {
       try {
-        const data = await pointService.getLeaderboard(10); // Get top 10 users
+        const data = await pointService.getLeaderboard(10);
         
-        // Transform the data to match the User interface
         const transformedData = data.map((user, index) => ({
           rank: index + 1,
           name: user.userName,
           points: user.totalPoints,
-          streak: 0, 
+          streak: user.streak || 0,
         }));
 
         setLeaderboardData(transformedData);

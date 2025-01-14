@@ -7,6 +7,7 @@ import { analyzeImage } from '@/services/AnalyzeImgService';
 import { Camera, X, Upload, Clock, Leaf, Shield,} from 'lucide-react';
 import { motion } from 'framer-motion';  // Import motion from framer-motion
 import { toast } from 'react-toastify';
+import { toastError, toastSuccess, toastWarning } from '@/utils/toastConfig';
 
 interface RecyclingSuggestion {
   title: string;
@@ -69,13 +70,7 @@ const ImageUpload = () => {
       try {
         const analysis = await analyzeImage(imageUrl);
         if (!analysis) {
-          toast.error('Tidak ada hasil analisis yang diterima.', {
-            icon: "❌",
-            style: {
-              background: "linear-gradient(to right, #ef4444, #dc2626)",
-              color: "white",
-            }
-          });
+          toastError('Tidak ada hasil analisis yang diterima.')
           return new Error('Tidak ada hasil analisis yang diterima.');
         }
         
@@ -85,33 +80,15 @@ const ImageUpload = () => {
         if (!analysis.pointsAdded) {
           setError('Batas Scan Harian Tercapai');
           setErrorDetail('Anda masih bisa melihat saran daur ulang, tetapi tidak mendapatkan poin tambahan hari ini.');
-          toast.warning('Batas Scan Harian Tercapai', {
-            icon: "⚠️",
-            style: {
-              background: "linear-gradient(to right, #f59e0b, #d97706)",
-              color: "white",
-            }
-          });
+          toastWarning('Batas Scan Harian Tercapai')
         } else {
-          toast.success('Scan berhasil! Poin telah ditambahkan.', {
-            icon: "🌟",
-            style: {
-              background: "linear-gradient(to right, #22c55e, #16a34a)",
-              color: "white",
-            }
-          });
+          toastSuccess('Scan berhasil! Poin telah ditambahkan.')
         }
       } catch (analysisError) {
         setError('Terjadi kesalahan dalam analisis gambar');
         setErrorDetail('Silakan coba lagi nanti.');
 
-        toast.error('Terjadi kesalahan dalam analisis gambar', {
-          icon: "❌",
-          style: {
-            background: "linear-gradient(to right, #ef4444, #dc2626)",
-            color: "white",
-          }
-        });
+        toastError('Terjadi kesalahan dalam analisis gambar')
       } finally {
         toast.dismiss(loadingToast);
       }
@@ -123,26 +100,12 @@ const ImageUpload = () => {
           setError('Format gambar tidak diterima');
           setErrorDetail('Coba unggah gambar dengan format JPG, PNG, atau JPEG.');
 
-          toast.error('Format gambar tidak diterima', {
-            icon: "🖼️",
-            style: {
-              background: "linear-gradient(to right, #ef4444, #dc2626)",
-              color: "white",
-              borderRadius: "1rem",
-            }
-          });
+          toastError('Format gambar tidak diterima')
         } else if (error.message.includes('clear')) {
           setError('Gambar terlalu buram atau tidak jelas.');
           setErrorDetail('Coba unggah gambar yang lebih jelas atau lebih terang.');
 
-          toast.error('Gambar terlalu buram atau tidak jelas', {
-            icon: "📸",
-            style: {
-              background: "linear-gradient(to right, #ef4444, #dc2626)",
-              color: "white",
-              borderRadius: "1rem",
-            }
-          });
+          toastError('Gambar terlalu buram atau tidak jelas')
         } else {
           setError('Terjadi kesalahan dalam proses unggah atau analisis gambar.');
           setErrorDetail('Pastikan gambar yang diunggah jelas dan dalam format yang didukung.');

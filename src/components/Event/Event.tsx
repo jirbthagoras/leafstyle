@@ -6,8 +6,9 @@ import { addAttendance, deleteAttendance } from "@/services/AttendanceService";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-import { motion } from "framer-motion"; // Import framer-motion
+import { color, motion } from "framer-motion"; // Import framer-motion
 import { toast } from 'react-toastify';
+import { toastError, toastSuccess } from "@/utils/toastConfig";
 
 const EventPage = () => {
     const [events, setEvents] = useState<Event[]>([]);
@@ -63,14 +64,7 @@ const EventPage = () => {
                 setUserAttendances(attendanceStatuses);
             } catch (error) {
                 console.error("Error fetching user attendances:", error);
-                toast.error('Failed to fetch user attendances', {
-                    icon: "❌",
-                    style: {
-                        background: "linear-gradient(to right, #ef4444, #dc2626)",
-                        color: "white",
-                        borderRadius: "1rem",
-                    }
-                });
+                toastError('Failed to fetch user attendances')
             }
         };
 
@@ -79,7 +73,7 @@ const EventPage = () => {
 
     const handleFormSubmit = async () => {
         if (!selectedEvent || !userId) {
-            toast.error("You must be logged in to attend an event.");
+            toastError("You must be logged in to attend an event.")
             return;
         }
 
@@ -97,23 +91,16 @@ const EventPage = () => {
                 ...prev,
                 [selectedEvent.id]: true,
             }));
-            toast.success("Successfully registered for the event!");
+            toastSuccess("Successfully registered for the event!")
         } catch (error) {
             console.error("Error recording attendance:", error);
-            toast.error("Failed to record attendance. Please try again.", {
-                icon: "❌",
-                style: {
-                    background: "linear-gradient(to right, #ef4444, #dc2626)",
-                    color: "white",
-                    borderRadius: "1rem",
-                }
-            });
+            toastError("Failed to record attendance. Please try again.")
         }
     };
 
     const handleCancelAttendance = async (eventId: string) => {
         if (!userId) {
-            toast.error("You must be logged in to cancel attendance.");
+            toastError("You must be logged in to cancel attendance.")
             return;
         }
 
@@ -123,17 +110,10 @@ const EventPage = () => {
                 ...prev,
                 [eventId]: false,
             }));
-            toast.success("Successfully cancelled attendance!");
+            toastSuccess("Successfully cancelled attendance!")
         } catch (error) {
             console.error("Error canceling attendance:", error);
-            toast.error("Failed to cancel attendance. Please try again.", {
-                icon: "❌",
-                style: {
-                    background: "linear-gradient(to right, #ef4444, #dc2626)",
-                    color: "white",
-                    borderRadius: "1rem",
-                }
-            });
+            toastError("Failed to cancel attendance. Please try again.")
         }
     };
 

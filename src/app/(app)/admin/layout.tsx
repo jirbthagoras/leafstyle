@@ -1,6 +1,6 @@
 'use client'
 import { FC, ReactNode, useState } from 'react'
-import { Home, Package, Calendar, LogOut, Menu, X } from 'lucide-react'
+import { Home,Calendar, LogOut, Menu, X, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -13,7 +13,7 @@ const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const menuItems = [
     { icon: Home, label: 'Dashboard', href: '/admin' },
-    { icon: Package, label: 'Products', href: '/admin/product' },
+    { icon: AlertCircle, label: 'Reports', href: '/admin/reports' },
     { icon: Calendar, label: 'Events', href: '/admin/event' },
   ]
   const router = useRouter()

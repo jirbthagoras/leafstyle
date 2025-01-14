@@ -4,33 +4,40 @@ import { logoutUser } from "@/services/AuthService";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase/config";
 
 export default function StateButton() {
     const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isLoading, setIsLoading] = useState(true); // Track loading state
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate checking the cookie (for a real app, this is instant)
-        const timer = setTimeout(() => {
-            const userCookie = Cookies.get("user");
-            setIsLoggedIn(!!userCookie); // Convert to boolean
-            setIsLoading(false); // Loading complete
-        }, 500); // Optional delay to show loading effect
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setIsLoggedIn(!!user);
+            setIsLoading(false);
+        });
 
-        return () => clearTimeout(timer); // Cleanup on unmount
+        return () => unsubscribe();
     }, []);
 
     const handleLogout = async () => {
-        setIsLoading(true); // Show loading during logout
-        await logoutUser();
-        setIsLoggedIn(false);
+        setIsLoading(true);
+        try {
+            await logoutUser();
+            setIsLoggedIn(false);
+            // Force reload the current page after logout
+            window.location.reload();
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
         setIsLoading(false);
     };
 
     const handleLogin = () => {
         router.push("/auth");
     }
+
     if (isLoading) {
         return <button
             disabled={true}
@@ -51,7 +58,7 @@ export default function StateButton() {
                 <button
                     onClick={handleLogin}
                     className="bg-green-600 text-white text-lg px-4 py-2 rounded-md font-medium hover:bg-green-700">
-                Login
+                    Login
                 </button>
             )}
         </div>
