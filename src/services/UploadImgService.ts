@@ -1,3 +1,4 @@
+import { toastError } from "@/utils/toastConfig";
 import { toast } from "react-toastify";
 
 export interface UploadConfig {
@@ -33,14 +34,7 @@ export const uploadImage = async (file: File, config: UploadConfig): Promise<str
     if (!response.ok) {
       const errorData = await response.json();
       console.error('Cloudinary error:', errorData);
-      toast.error("Failed to upload image", {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      });
+      toastError("Failed to upload image")
       throw new Error(errorData.error?.message || 'Failed to upload image');
     }
 
@@ -48,14 +42,7 @@ export const uploadImage = async (file: File, config: UploadConfig): Promise<str
     return data.secure_url;
   } catch (error) {
     console.error('Upload error details:', error);
-    toast.error("Failed to upload image", {
-      icon: "❌",
-      style: {
-        background: "linear-gradient(to right, #ef4444, #dc2626)",
-        color: "white",
-        borderRadius: "1rem",
-      }
-    });
+    toastError("Failed to upload image")
     throw new Error(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }; 

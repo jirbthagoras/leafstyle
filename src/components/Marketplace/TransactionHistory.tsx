@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Transaction } from '@/types/marketplace';
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Clock } from 'lucide-react';
 import { auth } from '@/lib/firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
 import marketplaceService from '@/services/MarketplaceService';
 import Image from 'next/image';
+import reportService from '@/services/ReportService';
+import Modal from './Modal';
+import { toastError, toastSuccess } from '@/utils/toastConfig';
 
 const TransactionHistory = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -16,6 +19,11 @@ const TransactionHistory = () => {
   const [filter, setFilter] = useState<'all' | 'buying' | 'selling'>('all');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const router = useRouter();
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState('');
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [reportedTransactions, setReportedTransactions] = useState<{ [key: string]: Report }>({});
+  const [isLoadingReports, setIsLoadingReports] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -29,22 +37,35 @@ const TransactionHistory = () => {
   }, [router]);
 
   useEffect(() => {
-    const loadTransactions = async () => {
-      if (isAuthenticated === null) return; // Wait for auth check
-      if (!isAuthenticated) return; // Don't load if not authenticated
-
+    const loadData = async () => {
+      if (!auth.currentUser) return;
+      
+      setLoading(true);
       try {
-        setLoading(true);
+        // Load transactions
         const userTransactions = await marketplaceService.getTransactionHistory(filter);
         setTransactions(userTransactions);
+
+        // Load reports
+        const reports = await reportService.getUserReports(auth.currentUser.uid);
+
+        // Create a map of reports indexed by transactionId
+        const reportMap = reports.reduce((acc, report) => {
+          if (report && report.transactionId) {
+            acc[report.transactionId] = report;
+          }
+          return acc;
+        }, {} as { [key: string]: Report });
+
+        setReportedTransactions(reportMap);
       } catch (error) {
-        console.error("Error loading transactions:", error);
+        toastError("Failed to load reports");
       } finally {
         setLoading(false);
       }
     };
 
-    loadTransactions();
+    loadData();
   }, [filter, isAuthenticated]);
 
   if (isAuthenticated === null || loading) {
@@ -83,9 +104,56 @@ const TransactionHistory = () => {
     }
   };
 
+  const handleReport = async () => {
+    try {
+      if (!selectedTransaction || !reportReason.trim()) {
+        alert('Please provide a reason for the report');
+        return;
+      }
+
+      const reportId = await reportService.createReport({
+        productId: selectedTransaction.productId,
+        productTitle: selectedTransaction.productTitle,
+        productImage: selectedTransaction.productImage,
+        sellerId: selectedTransaction.sellerId,
+        reason: reportReason,
+        transactionId: selectedTransaction.id
+      });
+
+      // Update the local state with the new report
+      setReportedTransactions(prev => ({
+        ...prev,
+        [selectedTransaction.id]: {
+          id: reportId,
+          transactionId: selectedTransaction.id,
+          productId: selectedTransaction.productId,
+          productTitle: selectedTransaction.productTitle,
+          productImage: selectedTransaction.productImage,
+          buyerId: auth.currentUser!.uid,
+          sellerId: selectedTransaction.sellerId,
+          reason: reportReason,
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      }));
+
+      setShowReportModal(false);
+      setReportReason('');
+      setSelectedTransaction(null);
+      toastSuccess('Report submitted successfully');
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      toastError('Failed to submit report');
+    }
+  };
+
   const renderTransactionCard = (transaction: Transaction) => {
     const isBuyer = auth.currentUser?.uid === transaction.buyerId;
+    const report = reportedTransactions[transaction.id];
     
+    console.log('Transaction:', transaction.id, 'Report:', report); // Debug log
+
     return (
       <motion.div
         key={transaction.id}
@@ -107,25 +175,122 @@ const TransactionHistory = () => {
               <p className="text-green-600 font-bold">
                 Rp {typeof transaction.price === 'number' ? transaction.price.toLocaleString() : '0'}
               </p>
+              <p className="text-sm text-gray-500">
+                {new Date(transaction.createdAt).toLocaleDateString()}
+              </p>
             </div>
           </div>
-          <div className="text-right">
+
+          <div className="flex flex-col items-end space-y-2">
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(transaction.status)}`}>
               {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
             </span>
-            <p className="text-sm text-gray-500 mt-2">{isBuyer ? 'Purchase' : 'Sale'}</p>
+            <p className="text-sm text-gray-500">{isBuyer ? 'Purchase' : 'Sale'}</p>
+            {isBuyer && transaction.status === 'completed' && !report && (
+              <button
+                onClick={() => {
+                  setSelectedTransaction(transaction);
+                  setShowReportModal(true);
+                }}
+                className="flex items-center space-x-1 text-red-600 hover:text-red-700 text-sm font-medium"
+              >
+                <AlertCircle className="w-4 h-4" />
+                <span>Report Issue</span>
+              </button>
+            )}
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-gray-600">
-          <div>
-            <p>{isBuyer ? 'Purchase Date:' : 'Sale Date:'}</p>
-            <p className="font-medium">{new Date(transaction.createdAt).toLocaleDateString()}</p>
+
+        {report && (
+          <div className="mt-4 p-4 rounded-lg bg-gray-50">
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <p className="font-medium text-gray-900">Report Status</p>
+                <p className="text-sm text-gray-600 mt-1">{report.reason}</p>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                report.status === 'resolved' ? 'bg-green-100 text-green-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+              </span>
+            </div>
+
+            {report.status !== 'pending' && (
+              <div className="mt-3 border-t pt-3">
+                <div className={`p-4 rounded-lg ${
+                  report.status === 'resolved' ? 'bg-green-50' : 'bg-red-50'
+                }`}>
+                  <div className="flex items-center mb-2">
+                    <span className={`mr-2 ${
+                      report.status === 'resolved' ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {report.status === 'resolved' ? '✓' : '✕'}
+                    </span>
+                    <p className={`font-medium ${
+                      report.status === 'resolved' ? 'text-green-800' : 'text-red-800'
+                    }`}>
+                      {report.status === 'resolved' ? 'Report Resolved' : 'Report Rejected'}
+                    </p>
+                  </div>
+                  {report.adminResponse && (
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-700">
+                        <span className="font-medium">Admin Response: </span>
+                        {report.adminResponse}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Updated: {new Date(report.updatedAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-          <div>
-            <p>Shipping Address:</p>
-            <p className="font-medium">{transaction.customerDetails.address}</p>
+        )}
+
+        <Modal
+          isOpen={showReportModal}
+          onClose={() => {
+            setShowReportModal(false);
+            setReportReason('');
+            setSelectedTransaction(null);
+          }}
+          title="Report Unsent Product"
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Product: {selectedTransaction?.productTitle}
+            </p>
+            <textarea
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              placeholder="Please describe why you're reporting this product..."
+              className="w-full px-4 py-2 border rounded-lg resize-none"
+              rows={4}
+            />
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowReportModal(false);
+                  setReportReason('');
+                  setSelectedTransaction(null);
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReport}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                Submit Report
+              </button>
+            </div>
           </div>
-        </div>
+        </Modal>
       </motion.div>
     );
   };
@@ -180,6 +345,8 @@ const TransactionHistory = () => {
       </div>
     </div>
   );
+
+  
 };
 
 export default TransactionHistory;

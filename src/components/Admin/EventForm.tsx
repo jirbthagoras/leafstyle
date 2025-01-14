@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
-import { toast } from 'react-toastify'
+import { toastError } from '@/utils/toastConfig'
 
 interface EventFormProps {
   onSubmit: (event: any) => void
@@ -44,14 +44,7 @@ export default function EventForm({ onSubmit, onCancel, uploading = false }: Eve
       setImagePreview(previewUrl)
       setImage(previewUrl)
     } catch (error) {
-      toast.error('Failed to upload image. Please try again.', {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      });
+      toastError('Failed to upload image. Please try again.')
     }
   }
 

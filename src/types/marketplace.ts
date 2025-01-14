@@ -53,6 +53,27 @@ interface Transaction {
     phone: string;
     address: string;
   };
+  reportStatus?: {
+    isReported: boolean;
+    reportId?: string;
+    status?: 'pending' | 'resolved' | 'rejected';
+    adminResponse?: string;
+  };
 }
 
-export type { Product, ProductFilter, Transaction }; 
+interface Report {
+  id: string;
+  transactionId: string;
+  productId: string;
+  productTitle: string;
+  productImage: string;
+  buyerId: string;
+  sellerId: string;
+  reason: string;
+  status: 'pending' | 'resolved' | 'rejected';
+  createdAt: string;
+  updatedAt: string;
+  adminResponse?: string;
+}
+
+export type { Product, ProductFilter, Transaction, Report }; 

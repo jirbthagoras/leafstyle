@@ -10,6 +10,7 @@ import { MessageCircle } from "lucide-react";
 import { Users } from "lucide-react";
 import { motion } from "framer-motion"; // Import motion
 import { toast } from "react-toastify";
+import { toastError } from "@/utils/toastConfig";
 // import { useRouter } from "next/router";
 
 export type Event = {
@@ -55,14 +56,7 @@ export const fetchEvents = async (userId: string | null): Promise<Event[]> => {
         return events;
     } catch (error) {
         console.error("Error fetching events: ", error);
-        toast.error("Failed to fetch events", {
-            icon: "❌",
-            style: {
-                background: "linear-gradient(to right, #ef4444, #dc2626)",
-                color: "white",
-                borderRadius: "1rem",
-            }
-        });
+        toastError("Failed to fetch events")
         throw new Error("Failed to fetch events");
     }
 };

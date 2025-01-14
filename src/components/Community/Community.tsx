@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import communityService, { Post } from "@/services/CommunityService";
 import { uploadImage } from "@/services/UploadImgService";
 import { toast } from 'react-toastify';
+import { toastSuccess } from "@/utils/toastConfig";
+import { toastError } from "@/utils/toastConfig";
 
 const CommunityPage: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -55,24 +57,11 @@ const CommunityPage: React.FC = () => {
       const updatedPosts = await communityService.fetchPosts();
       setPosts(updatedPosts);
 
-      toast.success('Post berhasil dibuat! 📝', {
-        style: {
-          background: "linear-gradient(to right, #22c55e, #16a34a)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      });
+      toastSuccess('Post berhasil dibuat! 📝')
     } catch (err) {
       console.error("Error creating post:", err);
       setError("Failed to create post. Please try again.");
-      toast.error('Gagal membuat post', {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      });
+      toastError('Gagal membuat post')
     } finally {
       setLoading(false);
     }

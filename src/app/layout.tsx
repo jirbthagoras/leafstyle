@@ -42,21 +42,7 @@ export default function RootLayout({
           pauseOnFocusLoss
           draggable
           pauseOnHover
-          theme="colored"
-          style={{
-            '--toastify-color-success': '#22c55e',
-            '--toastify-color-error': '#ef4444',
-            '--toastify-color-warning': '#f59e0b',
-            '--toastify-color-info': '#3b82f6',
-            '--toastify-border-radius': '1rem',
-          } as React.CSSProperties}
-          toastStyle={{
-            borderRadius: '1rem',
-            background: 'rgba(255, 255, 255, 0.9)',
-            backdropFilter: 'blur(8px)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            padding: '1rem',
-          }}
+          theme="light"
         />
       </body>
     </html>

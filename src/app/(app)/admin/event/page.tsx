@@ -13,6 +13,7 @@ import EventCard from '@/components/Admin/EventCard'
 import { addDoc, collection, doc, deleteDoc } from 'firebase/firestore'
 import { getFirestore } from 'firebase/firestore'
 import { toast } from 'react-toastify'
+import { toastError, toastSuccess } from '@/utils/toastConfig'
 
 export default function AdminEvents() {
   const router = useRouter()
@@ -42,14 +43,7 @@ export default function AdminEvents() {
       const events = await fetchEvents()
       setEvents(events)
     } catch (error) {
-      toast.error('Error loading events', {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      });
+      toastError('Error loading events')
     }
   }
 
@@ -61,23 +55,10 @@ export default function AdminEvents() {
         createdAt: new Date().toISOString()
       })
       loadEvents()
-      toast.success('Event created successfully!', {
-        icon: "🎉",
-        style: {
-          background: "linear-gradient(to right, #22c55e, #16a34a)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      });
+      toastSuccess('Event created successfully!')
+
     } catch (error) {
-      toast.error('Error creating event', {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      });
+      toastError('Error creating event')
     }
   }
 
@@ -86,23 +67,9 @@ export default function AdminEvents() {
       const db = getFirestore()
       await deleteDoc(doc(db, 'event', eventId))
       loadEvents()
-      toast.success('Event deleted successfully!', {
-        icon: "🗑️",
-        style: {
-          background: "linear-gradient(to right, #22c55e, #16a34a)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      });
+      toastSuccess('Event deleted successfully!')
     } catch (error) {
-      toast.error('Error deleting event', {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      });
+      toastError('Error deleting event')
     }
   }
 
