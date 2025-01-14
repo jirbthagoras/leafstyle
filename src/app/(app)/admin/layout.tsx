@@ -27,7 +27,8 @@ const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-yellow-50">
       {/* Mobile Header with Hamburger */}
       <header className="md:hidden bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
         <div className="px-4 py-4 flex items-center justify-between">
@@ -48,8 +49,8 @@ const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
       </header>
 
       {/* Sidebar - Desktop */}
-      <aside className="hidden md:flex fixed inset-y-0 left-0 w-64 bg-white shadow-lg">
-        <div className="flex flex-col h-full w-full">
+      <aside className="hidden md:flex fixed inset-y-0 left-0 w-64 bg-white shadow-lg active:border-green-800">
+        <div className="flex flex-col h-full w-full md:mt-20">
           <div className="flex items-center gap-3 px-6 py-4 border-b">
             <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">L</span>
@@ -132,7 +133,7 @@ const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
 
       {/* Main Content */}
       <div className="md:ml-64">
-        <main className="p-4 md:p-8 mt-16 md:mt-0">
+        <main className="mt-16 md:mt-0">
           {children}
         </main>
       </div>
