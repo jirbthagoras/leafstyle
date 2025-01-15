@@ -12,6 +12,7 @@ import { getDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import Modal from '@/components/Marketplace/Modal';
 import Image from 'next/image';
+import { toastError, toastSuccess, toastWarning } from '@/utils/toastConfig';
 interface ProductDetailProps {
   productId: string;
 }
@@ -91,13 +92,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
 
   const handleModalSubmit = async () => {
     if (!customerDetails.name || !customerDetails.phone || !customerDetails.email || !customerDetails.address) {
-      alert("Please fill in all required fields");
+      toastError("Please fill in all required fields");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(customerDetails.email)) {
-      alert("Please enter a valid email address");
+      toastError("Please enter a valid email address");
       return;
     }
 
@@ -148,16 +149,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
                 marketplaceService.checkout(productId, customerDetails),
                 paymentService.updateTransactionStatus(transactionId, 'pending')
               ]);
-              alert("Payment successful! Waiting for seller confirmation.");
+              toastSuccess("Payment successful! Waiting for seller confirmation.");
               router.push('/marketplace');
             } catch (error) {
               console.error('Error processing successful payment:', error);
-              alert('Payment successful but error updating status. Please contact support.');
+              toastWarning('Payment successful but error updating status. Please contact support.');
             }
           },
           onPending: async () => {
             await paymentService.updateTransactionStatus(transactionId, 'pending');
-            alert("Payment pending. Please complete your payment.");
+            toastWarning("Payment pending. Please complete your payment.");
           },
           onError: async () => {
             if (paymentAttempts < maxAttempts) {
@@ -165,12 +166,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
               handlePayment();
             } else {
               await paymentService.updateTransactionStatus(transactionId, 'failed');
-              alert("Payment failed after multiple attempts. Please try again.");
+              toastError("Payment failed after multiple attempts. Please try again.");
             }
           },
           onClose: async () => {
             await paymentService.updateTransactionStatus(transactionId, 'failed');
-            alert("Payment cancelled.");
+            toastError("Payment cancelled.");
           },
         });
       };
@@ -178,7 +179,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
       handlePayment();
     } catch (error) {
       console.error("Error during payment:", error);
-      alert(error instanceof Error ? error.message : "Failed to initiate payment. Please try again.");
+      toastError(error instanceof Error ? error.message : "Failed to initiate payment. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -190,10 +191,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
       await marketplaceService.handleOrder(productId, action);
       const updatedProduct = await marketplaceService.getProductById(productId);
       setProduct(updatedProduct);
-      alert(`Order ${action}ed successfully!`);
+      toastSuccess(`Order ${action}ed successfully!`);
     } catch (error) {
       console.error(`Error ${action}ing order:`, error);
-      alert(`Failed to ${action} order. Please try again.`);
+      toastError(`Failed to ${action} order. Please try again.`);
     } finally {
       setLoading(false);
     }
@@ -204,11 +205,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
       if (window.confirm('Are you sure you want to delete this product?')) {
         try {
           await marketplaceService.deleteProduct(productId);
-          alert('Product deleted successfully');
+          toastSuccess('Product deleted successfully');
           router.push('/marketplace');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-          alert(error.message || 'Failed to delete product');
+          toastError(error.message || 'Failed to delete product');
         }
       }
     };
@@ -307,13 +308,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
 
   const handleCheckout = async () => {
     if (!auth.currentUser) {
-      alert("Please login to buy this product");
+      toastError("Please login to buy this product");
       router.push('/auth');
       return;
     }
 
     if (product?.seller.id === auth.currentUser.uid) {
-      alert("You cannot buy your own product");
+      toastError("You cannot buy your own product");
       return;
     }
 

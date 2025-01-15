@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Report } from '@/types/marketplace';
 import reportService from '@/services/ReportService';
 import { motion } from 'framer-motion';
-import { toastError, toastSuccess } from '@/utils/toastConfig';
+import { toastError, toastSuccess, toastWarning } from '@/utils/toastConfig';
 
 const ReportManagement = () => {
   const [reports, setReports] = useState<Report[]>([]);
@@ -31,7 +31,7 @@ const ReportManagement = () => {
   const handleUpdateStatus = async (reportId: string, status: 'resolved' | 'rejected') => {
     try {
       if (!adminResponse.trim()) {
-        alert('Please provide a response');
+        toastWarning('Please provide a response');
         return;
       }
 

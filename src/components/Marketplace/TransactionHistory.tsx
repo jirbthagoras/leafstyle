@@ -107,7 +107,7 @@ const TransactionHistory = () => {
   const handleReport = async () => {
     try {
       if (!selectedTransaction || !reportReason.trim()) {
-        alert('Please provide a reason for the report');
+        toastError('Please provide a reason for the report');
         return;
       }
 
