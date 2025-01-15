@@ -63,7 +63,7 @@ export default function EventForm({ onSubmit, onCancel, uploading = false }: Eve
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500"
               placeholder="Enter event title"
             />
           </div>
