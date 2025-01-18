@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase/config';
 import { checkIsAdmin } from '@/lib/firebase/admin';
 import { onAuthStateChanged } from 'firebase/auth';
-import { FaCalendarAlt, FaFileInvoice, FaShoppingCart } from 'react-icons/fa';
+import { FaCalendarAlt, FaFileInvoice } from 'react-icons/fa';
 
 export default function AdminDashboard() {
   const router = useRouter();
