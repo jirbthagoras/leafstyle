@@ -13,6 +13,8 @@ import { db } from '@/lib/firebase/config';
 import Modal from '@/components/Marketplace/Modal';
 import Image from 'next/image';
 import { toastError, toastSuccess, toastWarning } from '@/utils/toastConfig';
+
+
 interface ProductDetailProps {
   productId: string;
 }

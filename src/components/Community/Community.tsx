@@ -5,7 +5,6 @@ import { PlaneIcon } from "lucide-react"; // Import ikon pesawat
 import { motion } from "framer-motion";
 import communityService, { Post } from "@/services/CommunityService";
 import { uploadImage } from "@/services/UploadImgService";
-import { toast } from 'react-toastify';
 import { toastSuccess } from "@/utils/toastConfig";
 import { toastError } from "@/utils/toastConfig";
 

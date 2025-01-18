@@ -1,7 +1,6 @@
 "use client";
 
 import { logoutUser } from "@/services/AuthService";
-import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { onAuthStateChanged } from "firebase/auth";

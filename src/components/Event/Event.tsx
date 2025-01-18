@@ -1,19 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
-import { ArrowRight, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Event, fetchEvents } from "@/services/EventService";
 import { addAttendance, deleteAttendance } from "@/services/AttendanceService";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-import { color, motion } from "framer-motion"; // Import framer-motion
-import { toast } from 'react-toastify';
+import { motion } from "framer-motion";
 import { toastError, toastSuccess } from "@/utils/toastConfig";
 
 const EventPage = () => {
     const [events, setEvents] = useState<Event[]>([]);
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [showForm, setShowForm] = useState(false);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isDetailView, setIsDetailView] = useState(false);
     const [formData, setFormData] = useState({ nama: "", kontak: "" });
     const [userId, setUserId] = useState<string | null>(null);

@@ -8,6 +8,7 @@ import { toastError, toastSuccess, toastWarning } from '@/utils/toastConfig';
 const ReportManagement = () => {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [adminResponse, setAdminResponse] = useState('');
 

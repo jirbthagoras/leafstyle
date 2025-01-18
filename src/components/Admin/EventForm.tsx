@@ -2,9 +2,10 @@ import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { toastError } from '@/utils/toastConfig'
+import { BaseEvent } from '@/services/EventService'
 
 interface EventFormProps {
-  onSubmit: (event: any) => void
+  onSubmit: (event: BaseEvent) => void
   onCancel: () => void
   uploading?: boolean
 }
@@ -32,7 +33,7 @@ export default function EventForm({ onSubmit, onCancel, uploading = false }: Eve
       speaker,
       schedule,
       image
-    })
+    } as BaseEvent)
   }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,6 +45,7 @@ export default function EventForm({ onSubmit, onCancel, uploading = false }: Eve
       setImagePreview(previewUrl)
       setImage(previewUrl)
     } catch (error) {
+      console.log(error)
       toastError('Failed to upload image. Please try again.')
     }
   }

@@ -1,6 +1,5 @@
 import { Groq } from 'groq-sdk';
 import pointService from './PointService';
-import { toast } from 'react-toastify';
 import { toastError } from '@/utils/toastConfig';
 
 const groq = new Groq({
@@ -22,11 +21,11 @@ interface RecyclingSuggestion {
 interface AnalysisResult {
   items: string;
   suggestions: RecyclingSuggestion[];
-  pointsAdded: boolean;
+  pointsAdded?: boolean;
   error?: string;
 }
 
-export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> => {
+export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult | null> => {
   try {
     // Analyze recyclable items
     const itemsAnalysis = await groq.chat.completions.create({
@@ -162,6 +161,7 @@ export const analyzeImage = async (imageUrl: string): Promise<AnalysisResult> =>
       }
     } catch (e) {
       toastError('Failed to parse suggestions or add points')
+      console.log(e)
       parsedSuggestions = [];
     }
 

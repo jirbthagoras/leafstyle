@@ -49,7 +49,7 @@ const HomePage = () => {
       left: "50%",
     },
     
-    animate: (i) => ({
+    animate: (i: number) => ({
       opacity: [0, 1, 1, 0],
       top: ["0%", "120%"],
       left: ["50%", `${50 + i * 10}%`],

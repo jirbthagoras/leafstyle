@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Transaction } from '@/types/marketplace';
+import { Transaction, Report } from '@/types/marketplace';
 import { motion } from 'framer-motion';
-import { ArrowLeft, AlertCircle, Clock } from 'lucide-react';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { auth } from '@/lib/firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
 import marketplaceService from '@/services/MarketplaceService';
@@ -23,6 +23,7 @@ const TransactionHistory = () => {
   const [reportReason, setReportReason] = useState('');
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [reportedTransactions, setReportedTransactions] = useState<{ [key: string]: Report }>({});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoadingReports, setIsLoadingReports] = useState(true);
 
   useEffect(() => {
@@ -59,6 +60,7 @@ const TransactionHistory = () => {
 
         setReportedTransactions(reportMap);
       } catch (error) {
+        console.log(error)
         toastError("Failed to load reports");
       } finally {
         setLoading(false);

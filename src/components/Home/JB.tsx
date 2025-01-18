@@ -5,6 +5,7 @@ import {  ArrowRight, } from "lucide-react";
 import { useRouter } from "next/navigation";
 const HeroSection = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [isHovering, setIsHovering] = useState(false);
           const router = useRouter();

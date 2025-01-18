@@ -4,7 +4,9 @@ import { Flame, Star, Sparkles } from "lucide-react";
 import pointService from "../../services/PointService";
 
 const StreakPointsCard = ({ streak, points }: { streak: number; points: number }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeSection, setActiveSection] = useState(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [streakStatus, setStreakStatus] = useState<{
     isActive: boolean;
     daysUntilBreak: number;
@@ -30,6 +32,7 @@ const StreakPointsCard = ({ streak, points }: { streak: number; points: number }
     }
   }, [streak]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const generateSparkles = (count: number) => {
     return Array.from({ length: count }).map((_, i) => (
       <div

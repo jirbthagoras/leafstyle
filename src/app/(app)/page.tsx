@@ -1,8 +1,14 @@
+'use client'
+
+import dynamic from 'next/dynamic'
 import HeroSection from "@/components/Home/HeroSection";
-import AISection from "@/components/Home/AiSection";
-import MarketplaceSection from "@/components/Home/JB";
-import CommunitySection from "@/components/Home/Community";
-import Footer from "@/components/Home/Footer";
+
+// Dynamic imports with ssr disabled
+const AISection = dynamic(() => import("@/components/Home/AiSection"), { ssr: false });
+const MarketplaceSection = dynamic(() => import("@/components/Home/JB"), { ssr: false });
+const CommunitySection = dynamic(() => import("@/components/Home/Community"), { ssr: false });
+const Footer = dynamic(() => import("@/components/Home/Footer"), { ssr: false });
+
 export default function Home() {
     return (
         <div>

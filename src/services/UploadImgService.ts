@@ -1,5 +1,4 @@
 import { toastError } from "@/utils/toastConfig";
-import { toast } from "react-toastify";
 
 export interface UploadConfig {
   uploadPreset: string;

@@ -58,6 +58,7 @@ const AddProduct = () => {
         {
           ...formData,
           price,
+          images: images.map(image => URL.createObjectURL(image))
         },
         images
       );

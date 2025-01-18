@@ -37,7 +37,7 @@ interface ProductFilter {
   condition?: string;
 }
 
-interface Transaction {
+  interface Transaction {
   id: string;
   productId: string;
   productTitle: string;
