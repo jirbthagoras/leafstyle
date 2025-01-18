@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase/config';
 import { checkIsAdmin } from '@/lib/firebase/admin';
 import { onAuthStateChanged } from 'firebase/auth';
-import { FaCalendarAlt, FaShoppingCart } from 'react-icons/fa';
+import { FaCalendarAlt, FaFileInvoice } from 'react-icons/fa';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -67,18 +67,18 @@ export default function AdminDashboard() {
           <div className="bg-white shadow-lg rounded-lg p-6 transition-transform transform hover:scale-105">
             <div className="flex items-center space-x-4">
               <div className="p-4 bg-green-100 text-green-600 rounded-full">
-                <FaShoppingCart size={24} />
+                <FaFileInvoice size={24} />
               </div>
               <div>
-                <h2 className="text-xl font-bold">Manage Products</h2>
-                <p className="text-gray-600">Add, update, or remove products in your store.</p>
+                <h2 className="text-xl font-bold">Manage Reports</h2>
+                <p className="text-gray-600">View and manage reports from users.</p>
               </div>
             </div>
             <a
-              href="/admin/products"
+              href="/admin/reports"
               className="mt-4 inline-block bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
             >
-              Go to Products
+              Go to Reports
             </a>
           </div>
         </div>

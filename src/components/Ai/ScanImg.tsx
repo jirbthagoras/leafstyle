@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { uploadImage } from '@/services/UploadImgService';
 import { analyzeImage } from '@/services/AnalyzeImgService';
 import { Camera, X, Upload, Clock, Leaf, Shield,} from 'lucide-react';
-import { motion } from 'framer-motion';  // Import motion from framer-motion
+import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { toastError, toastSuccess, toastWarning } from '@/utils/toastConfig';
 
@@ -23,7 +23,7 @@ interface RecyclingSuggestion {
 interface AnalysisResult {
   items: string;
   suggestions: RecyclingSuggestion[];
-  pointsAdded: boolean;
+  pointsAdded?: boolean;
   error?: string;
 }
 
@@ -36,14 +36,13 @@ const ImageUpload = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
-  // Scroll ke hasil analisis setelah gambar diunggah
   useEffect(() => {
     if (result) {
       resultRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [result]);
 
-  const handleImageUpload = async (file: File) => {
+  const handleImageUpload = async (file: File)  => {
     try {
       setLoading(true);
       setError('');
@@ -84,6 +83,7 @@ const ImageUpload = () => {
         } else {
           toastSuccess('Scan berhasil! Poin telah ditambahkan.')
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (analysisError) {
         setError('Terjadi kesalahan dalam analisis gambar');
         setErrorDetail('Silakan coba lagi nanti.');

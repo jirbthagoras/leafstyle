@@ -56,9 +56,8 @@ export const signUpUser = async (email: string, password: string, name: string) 
 export const loginUser = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    console.log('Before saving cookie');
     await saveCookie(userCredential);
-    console.log('After saving cookie, cookie value:', Cookies.get('user'));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const isAdmin = await checkAndSetAdminStatus(userCredential.user.uid);
     return userCredential.user;
   } catch (error) {

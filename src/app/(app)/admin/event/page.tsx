@@ -8,11 +8,11 @@ import { auth } from '@/lib/firebase/config'
 import { checkIsAdmin } from '@/lib/firebase/admin'
 import { onAuthStateChanged } from 'firebase/auth'
 import { fetchEvents } from '@/services/EventService'
+import type { BaseEvent, Event } from '@/services/EventService'
 import EventForm from '@/components/Admin/EventForm'
 import EventCard from '@/components/Admin/EventCard'
 import { addDoc, collection, doc, deleteDoc } from 'firebase/firestore'
 import { getFirestore } from 'firebase/firestore'
-import { toast } from 'react-toastify'
 import { toastError, toastSuccess } from '@/utils/toastConfig'
 
 export default function AdminEvents() {
@@ -44,21 +44,23 @@ export default function AdminEvents() {
       setEvents(events)
     } catch (error) {
       toastError('Error loading events')
+      console.error(error)
     }
   }
 
-  const handleSubmit = async (event: Event) => {
+  const handleSubmit = async (eventData: BaseEvent) => {
     try {
       const db = getFirestore()
       await addDoc(collection(db, 'event'), {
-        ...event,
+        ...eventData,
         createdAt: new Date().toISOString()
       })
       loadEvents()
       toastSuccess('Event created successfully!')
-
+      setShowForm(false)
     } catch (error) {
       toastError('Error creating event')
+      console.log(error)
     }
   }
 
@@ -70,6 +72,7 @@ export default function AdminEvents() {
       toastSuccess('Event deleted successfully!')
     } catch (error) {
       toastError('Error deleting event')
+      console.log(error)
     }
   }
 

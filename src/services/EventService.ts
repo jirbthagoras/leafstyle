@@ -1,19 +1,21 @@
 import {collection, getDocs} from "firebase/firestore";
-import {db} from "@/lib/firebase/config"; // Assuming you defined Event type in the same file
-import { toast } from "react-toastify";
+import {db} from "@/lib/firebase/config";
 import { toastError } from "@/utils/toastConfig";
 
-export type Event = {
-    eventType: string;
-    contactNumber: string;
-    location: string;
-    id: number;
+export type BaseEvent = {
     title: string;
+    date: string;
     description: string;
     details: string;
-    date: string;
-    organizer: string;
+    location: string;
+    eventType: string;
+    speaker: string;
+    schedule: string;
     image: string;
+};
+
+export type Event = BaseEvent & {
+    id: string;
 };
 
 export const fetchEvents = async (): Promise<Event[]> => {

@@ -8,7 +8,7 @@ const AISection = () => {
       const router = useRouter();
     
       const ClickAi = () => {
-        router.push('/ai'); // Navigasi ke halaman '/mulai'
+        router.push('/ai');
       };
     const steps = [
         {

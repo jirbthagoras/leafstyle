@@ -1,9 +1,6 @@
-import { doc } from "firebase/firestore";
-import { collection, updateDoc } from "firebase/firestore";
+import { doc, collection, updateDoc, addDoc } from "firebase/firestore";
 import midtransClient from "midtrans-client";
 import { db } from "@/lib/firebase/config";
-import { addDoc } from "firebase/firestore";
-import { toast } from "react-toastify";
 import { toastError } from "@/utils/toastConfig";
 class PaymentService {
   private readonly MIDTRANS_URL = process.env.NEXT_PUBLIC_MIDTRANS_URL;

@@ -1,7 +1,7 @@
 import { collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, getDoc } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase/config";
 import { Report } from "@/types/marketplace";
-import { toastError, toastSuccess } from '@/utils/toastConfig';
+import { toastError } from '@/utils/toastConfig';
 
 class ReportService {
   async createReport(data: {

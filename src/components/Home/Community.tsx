@@ -9,7 +9,6 @@ import { ArrowRight } from "lucide-react";
 import { MessageCircle } from "lucide-react";
 import { Users } from "lucide-react";
 import { motion } from "framer-motion"; // Import motion
-import { toast } from "react-toastify";
 import { toastError } from "@/utils/toastConfig";
 // import { useRouter } from "next/router";
 

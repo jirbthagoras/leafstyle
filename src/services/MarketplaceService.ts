@@ -1,9 +1,8 @@
-import { collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, deleteDoc, getDoc, deleteField, Transaction, limit, Query } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, deleteDoc, getDoc, deleteField, limit, Query } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase/config";
 import { Product, ProductFilter } from "@/types/marketplace";
 import { uploadImage } from "./UploadImgService";
 import PointService from "./PointService";
-import { toast } from "react-toastify";
 import { toastError } from "@/utils/toastConfig";
 
 class MarketplaceService {
@@ -219,12 +218,6 @@ class MarketplaceService {
             `Sold item: ${productData.title}`,
             'MARKETPLACE_SALE'
           ),
-          PointService.addPoints(
-            point,
-            `Purchased recycled/reused item: ${productData.title}`,
-            'MARKETPLACE_SALE',
-            productData.buyer?.id
-          )
         ]);
       } else {
         await Promise.all([
@@ -270,7 +263,7 @@ class MarketplaceService {
     }
   }
 
-  async getTransactionHistory(filter: 'all' | 'buying' | 'selling' = 'all'): Promise<Transaction[]> {
+  async getTransactionHistory(filter: 'all' | 'buying' | 'selling' = 'all'): Promise<import('@/types/marketplace').Transaction[]> {
     try {
       if (!auth.currentUser) throw new Error("User not authenticated");
 
@@ -300,17 +293,17 @@ class MarketplaceService {
           ...buyingSnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
-          })),
+          } as import('@/types/marketplace').Transaction)),
           ...sellingSnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
-          }))
+          } as import('@/types/marketplace').Transaction))
         ];
 
         // Sort by createdAt in descending order
         return allTransactions.sort((a, b) => 
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        ) as Transaction[];
+        );
       }
 
       if (conditions.length > 0) {
@@ -322,17 +315,10 @@ class MarketplaceService {
       return snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      })) as Transaction[];
+      })) as import('@/types/marketplace').Transaction[];
     } catch (error) {
       console.error("Error fetching transaction history:", error);
-      toast.error("Failed to fetch transaction history", {
-        icon: "❌",
-        style: {
-          background: "linear-gradient(to right, #ef4444, #dc2626)",
-          color: "white",
-          borderRadius: "1rem",
-        }
-      }); 
+      toastError("Failed to fetch transaction history")
       throw error;
     }
   }

@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import midtransClient from 'midtrans-client';
-import { toast } from 'react-toastify';
 import { toastError } from '@/utils/toastConfig';
 
 export async function POST(request: Request) {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { productId, amount, productName, buyerId, customerDetails } = await request.json();
 
     if (!process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY) {
@@ -41,13 +41,13 @@ export async function POST(request: Request) {
       }
     };
 
-    const transaction = await snap.createTransaction(parameter);
-    return NextResponse.json({ token: transaction.token });
-  } catch (error: any) {
+    const transaction = await snap.createTransactionToken(parameter);
+    return NextResponse.json({ token: transaction });
+  } catch (error: Error | unknown) {
     console.error('Payment creation error:', error);
     toastError('Failed to create payment')
     return NextResponse.json(
-      { error: error.message || 'Failed to create payment' },
+      { error: error instanceof Error ? error.message : 'Failed to create payment' },
       { status: 500 }
     );
   }

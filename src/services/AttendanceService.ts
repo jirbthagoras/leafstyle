@@ -11,7 +11,7 @@ import { db } from "@/lib/firebase/config";
 
 // Add attendance with string IDs
 export const addAttendance = async (
-    eventId: number,
+    eventId: string,
     userId: string,
     userName: string,
     userContact: string
