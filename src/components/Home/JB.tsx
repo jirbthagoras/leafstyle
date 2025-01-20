@@ -11,7 +11,7 @@ const HeroSection = () => {
           const router = useRouter();
         
           const ClickJB = () => {
-            router.push('/toko'); // Navigasi ke halaman '/mulai'
+            router.push('/marketplace'); // Navigasi ke halaman '/mulai'
           };
     const cards = [
         {
