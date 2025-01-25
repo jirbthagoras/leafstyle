@@ -102,7 +102,7 @@ const Pohon = () => {
         <Leaderboard />
         {/* Pohon */}
         <motion.div
-          className="min-h-screen relative h-fit rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-all bg-gradient-to-t from-green-50 via-gray-50 to-green-50 md:mt-20 md:max-w-lg lg:max-w-xl mb-6"
+          className="relative h-fit rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-all bg-gradient-to-t from-green-50 via-gray-50 to-green-50 md:mt-20 md:max-w-lg lg:max-w-xl mb-6"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.3, ease: "easeInOut" }} // Memperbaiki easing
